@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	<title>Document</title>
+
+	<!-- import bootstrap -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	
+	<!-- import class file -->
+	<script src="./class/Map.js"></script>
+</head>
+<body class="d-flex vw-100 vh-100">
+
+	<!-- sidebar -->
+	<nav class="p-3 border-right shadow" style="min-width:240px; z-index:100;">
+		<h1 class="text-center">ADD ON</h1>
+		<hr>
+		<div class="form-group">
+			<label for="widthInput">Width</label>
+			<input type="number" step="1" min="1" max="999" class="form-control" id="widthInput" placeholder="">
+		</div>
+		<div class="form-group">
+			<label for="heightInput">Height</label>
+			<input type="number" step="1" min="1" max="999" class="form-control" id="heightInput" placeholder="">
+		</div>
+		<div class="form-group">
+			<label for="pdInput">Probability-Danger</label>
+			<input type="number" min="0" max="0.99" class="form-control" id="pdInput" placeholder="">
+		</div>
+		<div class="form-group">
+			<label for="ptInput">Probability-Target</label>
+			<input type="number" min="0" max="0.99" class="form-control" id="ptInput" placeholder="">
+		</div>
+		<button id="Btn_InitMap" type="button" class="btn btn-primary">Init</button>
+	</nav>
+
+	<!-- map -->
+	<div class="d-flex flex-grow-1 overflow-auto p-1">
+		<div class="m-auto">
+			<svg id="Map" class="shadow"></svg>
+		</div>
+	</div>
+	
+	<!-- script -->
+	<script>
+		// global variables
+		var map;
+
+		// draw map
+		drawMap = (w, h) => {
+			// get information of tiles
+			let tile = map.getAllTiles();
+
+			let x, y, color, str = '';
+			for (x = 0; x < w; x++)
+			{
+				for (y = 0; y < h; y++)
+				{
+					// calculate color
+					switch (tile[y][x])
+					{
+						case "O": color = '#00ff00'; break;
+						case "X": color = '#ff0000'; break;
+						default : color = '#ffffff'; break;
+					}
+
+					// make rectangle
+					str += `<rect
+						x="${x * 30}" y="${y * 30}" width="30" height="30"
+						r="0" rx="0" ry="0"
+						fill="${color}" stroke="#000"
+						style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); stroke-opacity: 0.2;"
+						stroke-opacity="0.2"
+						></rect>`;
+				}
+			}
+
+			// draw
+			$('#Map').html(str).attr('width', w * 30).attr('height', h * 30);
+		};
+
+		// initialize map
+		initMap = () => {
+			// get weight, height, probability
+			let w  = parseInt($('#widthInput').val() ) || 1;
+			let h  = parseInt($('#heightInput').val()) || 1;
+			let pd = parseFloat($('#pdInput').val())   || 0;
+			let pt = parseFloat($('#ptInput').val())   || 0;
+
+			// handle exceptions
+			if (w < 1) w = 1;
+			if (h < 1) h = 1;
+			if (w > 999) w = 999;
+			if (h > 999) h = 999;
+			if (pd < 0) pd = 0;
+			if (pt < 0) pt = 0;
+			if (pd > 0.99) pd = 0.99;
+			if (pt > 0.99) pt = 0.99;
+
+			// create a new map
+			map = new Map(w, h, pd, pt);
+
+			// draw the map
+			drawMap(w, h);
+		};
+
+		$(document).ready(() => {
+			map = new Map(8, 8, 0, 0);
+			$('#Btn_InitMap').click(initMap);
+			drawMap(8, 8);
+		})
+	</script>
+</body>
+</html>
