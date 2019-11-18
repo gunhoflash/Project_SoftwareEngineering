@@ -1,40 +1,37 @@
 class Map {
 
-	constructor(width, height, probability_danger, probability_target) {
-		this.init(width, height, probability_danger, probability_target);
-	}
+	/*
+		Properties
 
-	init(width, height, probability_danger, probability_target) {
-		this.width  = width;
-		this.height = height;
-		this.tile   = [];
+		private map_width
+		private map_height
+		private map_info
 
-		probability_target += probability_danger;
+	*/
 
-		let i, j, r;
-		for (i = 0; i < this.height; i++)
-		{
-			this.tile[i] = [];
-			for (j = 0; j < this.width; j++)
-			{
-				r = Math.random();
-				     if (r < probability_danger) this.tile[i][j] = 'X'; // danger
-				else if (r < probability_target) this.tile[i][j] = 'O'; // target
-				else                             this.tile[i][j] = ' '; // normal
-			}
-		}
-		console.log(`Map(${this.width}*${this.height}) initialized`);
-		console.log(this.tile);
-	}
+	/*
+		Called by AddOnManager.
+	*/
+	public initMap(size) {}
 
-	// read a tile
-	getTile(i, j) {
-		console.log(`tile[${i}][${j}]: ${this.tile[i][j]}`);
-		return this.tile[i][j];
-	}
+	/*
+		Called by AddOnManager.
+	*/
+	public setHazard(position) {}
 
-	// read all tile for visualizing
-	getAllTiles() {
-		return this.tile;
-	}
+	/*
+		Called by AddOnManager.
+	*/
+	public setColorBlob(position) {}
+
+	/*
+		Called by AddOnManager.
+	*/
+	public getHazard() {}
+
+	/*
+		Called by AddOnManager.
+	*/
+	public getColorBlob() {}
+
 }
