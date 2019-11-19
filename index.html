@@ -14,7 +14,23 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	
 	<!-- import class file -->
-	<script src="./class/Map.js"></script>
+	<script src="./class/UserInterface.js"></script>
+
+	<style>
+		rect.tile {
+			width: 30px;
+			height: 30px;
+			stroke: #000000;
+			stroke-opacity: 0.2;
+			fill: #fafafa;
+		}
+		rect.tile.hazard {
+			fill: #ff0000;
+		}
+		rect.tile.target {
+			fill: #00ff00;
+		}
+	</style>
 </head>
 <body class="d-flex vw-100 vh-100">
 
@@ -23,33 +39,26 @@
 		<h1 class="text-center">ADD ON</h1>
 		<hr>
 		<div class="form-group">
-			<label for="widthInput">Width</label>
-			<input type="number" step="1" min="1" max="999" class="form-control" id="widthInput" placeholder="">
+			<label for="input_width">Width</label>
+			<input type="number" step="1" min="1" max="999" class="form-control" id="input_width" placeholder="">
 		</div>
 		<div class="form-group">
-			<label for="heightInput">Height</label>
-			<input type="number" step="1" min="1" max="999" class="form-control" id="heightInput" placeholder="">
+			<label for="input_height">Height</label>
+			<input type="number" step="1" min="1" max="999" class="form-control" id="input_height" placeholder="">
 		</div>
-		<div class="form-group">
-			<label for="pdInput">Probability-Danger</label>
-			<input type="number" min="0" max="0.99" class="form-control" id="pdInput" placeholder="">
-		</div>
-		<div class="form-group">
-			<label for="ptInput">Probability-Target</label>
-			<input type="number" min="0" max="0.99" class="form-control" id="ptInput" placeholder="">
-		</div>
-		<button id="Btn_InitMap" type="button" class="btn btn-primary">Init</button>
+		<button id="button_init" type="button" class="btn btn-primary">Init</button>
 	</nav>
 
 	<!-- map -->
-	<div class="d-flex flex-grow-1 overflow-auto p-1">
-		<div class="m-auto">
-			<svg id="Map" class="shadow"></svg>
+	<div class="d-flex flex-grow-1 overflow-auto">
+		<div class="p-4 p-md-5 m-auto">
+			<svg id="svg_map" class="shadow"></svg>
 		</div>
 	</div>
 	
 	<!-- script -->
 	<script>
+		/*
 		// global variables
 		var map;
 
@@ -116,6 +125,20 @@
 			$('#Btn_InitMap').click(initMap);
 			drawMap(8, 8);
 		})
+		*/
+		var ui;
+		ui = UserInterface
+			.getUserInterface()
+			.registerUIComponents([
+				{ type: 'svg_map',      target: document.getElementById('svg_map')      },
+				{ type: 'input_width',  target: document.getElementById('input_width')  },
+				{ type: 'input_height', target: document.getElementById('input_height') },
+				{ type: 'button_init',  target: document.getElementById('button_init')  }/*,
+				{ type: 'button_start', target: document.getElementById('button_start') },
+				{ type: 'button_stop',  target: document.getElementById('button_stop')  },
+				{ type: 'button_mode',  target: document.getElementById('button_mode')  }*/
+			]);
+
 	</script>
 </body>
 </html>
