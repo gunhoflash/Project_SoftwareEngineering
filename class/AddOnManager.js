@@ -1,4 +1,4 @@
-class AddOnMananger {
+class AddOnManager {
 
 	/*
 		Properties
@@ -10,12 +10,15 @@ class AddOnMananger {
 
 	*/
 
+	constructor() {
+	}
+
 	/*
 		Called by SIMManager.
 	*/
-	public init(size, info) {}
+	init(size, info) {}
 
-	public startRobotSimulation() {
+	startRobotSimulation() {
 		// UI.updateMap
 		// SM.readSensor()
 		// Path.calculatePath()

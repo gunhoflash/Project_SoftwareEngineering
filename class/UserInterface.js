@@ -6,25 +6,25 @@ class UserInterface {
 	*/
 
 	// static property
-	static #ui     = null;
+	static #ui;
 
 	// variables
-	#map_width     = 0;
-	#map_height    = 0;
-	#pointing_mode = 'default';
+	#status;           // 'init', 'stop', 'start'
+	#pointing_mode;    // ['default', 'target', 'harzard', 'start', 'end']
+	#map_width;
+	#map_height;
 
 	// ADD-ON
-	// #addonManager
+	#addonManager;
 
 	// UI components
-	#svg_map       = null;
-	#svg_rects     = null;
-	#input_width   = null;
-	#input_height  = null;
-	#button_init   = null;
-	#button_start  = null;
-	#button_stop   = null;
-	#button_mode   = null;
+	#svg_map;
+	#svg_rects;        // [rect, ...];
+	#input_width;
+	#input_height;
+	#button_init;
+	#button_mode;
+	#button_start_stop;
 
 	/*
 		Called by this.getUserInterface().
@@ -34,16 +34,23 @@ class UserInterface {
 	constructor() {
 		// TODO: edit something
 		// TODO: init variables
+		this.status = 'init';
+		this.pointing_mode = ['default', 'target', 'hazard', 'start', 'end'];
+		
+		this.addonManager = new AddOnManager();
 	}
+
+	/*
+		Methods
+	*/
 
 	/*
 		called by default.
 		For singleton pattern.
 	*/
 	static getUserInterface() {
-		if (UserInterface.ui == null) {
+		if (!UserInterface.ui)
 			UserInterface.ui = new UserInterface();
-		}
 		return UserInterface.ui;
 	}
 
@@ -53,10 +60,10 @@ class UserInterface {
 	*/
 	registerUIComponents(array) {
 		for (let component of array) {
-			console.log(component);
 			switch (component.type) {
 				case "svg_map":
 					this.svg_map = component.target;
+					this.svg_map.addEventListener('mousedown', this.setPoint.bind(this));
 					break;
 				case "input_width":
 					this.input_width = component.target;
@@ -68,34 +75,56 @@ class UserInterface {
 					this.button_init = component.target;
 					this.button_init.addEventListener('click', this.initMap.bind(this));
 					break;
-				case "button_start":
-					this.button_start = component.target;
-					this.button_init.addEventListener('click', this.startSearching.bind(this));
-					break;
-				case "button_stop":
-					this.button_stop = component.target;
-					this.button_init.addEventListener('click', this.stopSearching.bind(this));
-					break;
 				case "button_mode":
 					this.button_mode = component.target;
-					this.button_init.addEventListener('click', this.changePointingMode.bind(this));
+					this.button_mode.addEventListener('click', this.changePointingMode.bind(this));
+					break;
+				case "button_start_stop":
+					this.button_start_stop = component.target;
+					this.button_start_stop.addEventListener('click', this.startStopSearching.bind(this));
 					break;
 				default:
 					break;
 			}
 		}
-		return this;
 	}
 
 	/*
 	*/
-	updateMap() {}
+	updateMap() {
+		// TODO: edit it
+	}
 
 	/*
 		Called by click trigger.
 		Set the harzard/target/start/end points.
 	*/
-	setPoint() {}
+	setPoint(event) {
+		// handle exception: no rect
+		if (!this.svg_rects) return;
+
+		// set the rect's type
+		let type = this.pointing_mode[0];
+		if (event.target.dataset.type == type) {
+			event.target.dataset.type = 'default';
+			return;
+		}
+
+		/*
+			If the selected type is 'start' or 'end'
+			and there is already a tile with same type,
+			change that tile's type to 'default'
+		*/
+		if (type == 'start' || type == 'end') {
+			for (let rect of this.svg_rects.flat()) {
+				if (rect.dataset.type == type) {
+					rect.dataset.type = 'default';
+					break;
+				}
+			}
+		}
+		event.target.dataset.type = type;
+	}
 
 	/*
 		Called by click trigger.
@@ -110,32 +139,67 @@ class UserInterface {
 		// set size
 		this.map_width = parseInt(this.input_width.value);
 		this.map_height = parseInt(this.input_height.value);
+
+		// set size(width/height) of the map component
+		this.svg_map.style.width = this.map_width * 30;
+		this.svg_map.style.height = this.map_height * 30;
 		
 		// initialize all tiles
 		this.initTiles();
-
-		// TODO: delete exist tiles
-		// TODO: create new tiles
 	}
 
 	/*
 		Called by click trigger.
+		Start or stop searching.
+	*/
+	startStopSearching() {
+		// TODO: edit it
+		if (this.status == 'start') {
+			// when 'start' status, stop searching
+			this.stopSearching();
+		} else if (this.status == 'stop') {
+			// when 'stop' status, start searching
+			this.startSearching();
+		} else {
+			// when 'init' status, do nothing
+		}
+	}
+
+	/*
+		Called by this.startStopSearching()
 		Start searching route and visualizing the simulation.
 	*/
-	startSearching() {}
-
+	startSearching() {
+		// TODO: edit it
+		this.status = 'start';
+		this.button_start_stop.innerHTML = 'Stop';
+		this.button_start_stop.disabled = false;
+		this.button_mode.disabled = true;
+		// TODO: send start signal to ADD-ON
+	}
+	
 	/*
 		Called by click trigger or this.initMap().
 		Stop searching route and visualizing the simulation.
 	*/
-	stopSearching() {}
+	stopSearching() {
+		// TODO: edit it
+		this.status = 'stop';
+		this.button_start_stop.innerHTML = 'Start';
+		this.button_start_stop.disabled = false;
+		this.button_mode.disabled = false;
+		// TODO: send stop signal to ADD-ON
+	}
 
 	
 	/*
 		Called by click trigger.
 		Change pointing mode; i.e. harzard/target/start/end/none
 	*/
-	changePointingMode() {}
+	changePointingMode() {
+		this.pointing_mode.push(this.pointing_mode.shift());
+		this.button_mode.innerHTML = this.pointing_mode[0];
+	}
 
 
 	/*
@@ -154,7 +218,7 @@ class UserInterface {
 		}
 		this.svg_rects = [];
 
-		// create new tiles
+		// create new tiles and put them into this.svg_rects
 		for (i = 0; i < this.map_height; i++) {
 			this.svg_rects.push([]);
 			for (j = 0; j < this.map_width; j++) {
@@ -162,13 +226,10 @@ class UserInterface {
 				tile.setAttribute('class', 'tile');
 				tile.setAttribute('x', j * 30);
 				tile.setAttribute('y', i * 30);
+				tile.dataset.type = 'default';
 				this.svg_map.appendChild(tile);
 				this.svg_rects[i].push(tile);
 			}
 		}
-
-		// set size of the map component
-		this.svg_map.style.width = this.map_width * 30;
-		this.svg_map.style.height = this.map_height * 30;
 	}
 }

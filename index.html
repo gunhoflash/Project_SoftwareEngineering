@@ -13,23 +13,21 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	
-	<!-- import class file -->
+	<script src="./class/AddOnManager.js"></script>
 	<script src="./class/UserInterface.js"></script>
-
+	
 	<style>
 		rect.tile {
 			width: 30px;
 			height: 30px;
 			stroke: #000000;
 			stroke-opacity: 0.2;
-			fill: #fafafa;
 		}
-		rect.tile.hazard {
-			fill: #ff0000;
-		}
-		rect.tile.target {
-			fill: #00ff00;
-		}
+		rect.tile[data-type="default"] { fill: #fafafa; }
+		rect.tile[data-type="hazard"]  { fill: #ff0000; }
+		rect.tile[data-type="target"]  { fill: #00ff00; }
+		rect.tile[data-type="start"]   { fill: #0000ff; }
+		rect.tile[data-type="end"]     { fill: #ff00ff; }
 	</style>
 </head>
 <body class="d-flex vw-100 vh-100">
@@ -37,7 +35,9 @@
 	<!-- sidebar -->
 	<nav class="p-3 border-right shadow" style="min-width:240px; z-index:100;">
 		<h1 class="text-center">ADD ON</h1>
+		
 		<hr>
+		
 		<div class="form-group">
 			<label for="input_width">Width</label>
 			<input type="number" step="1" min="1" max="999" class="form-control" id="input_width" placeholder="">
@@ -46,7 +46,16 @@
 			<label for="input_height">Height</label>
 			<input type="number" step="1" min="1" max="999" class="form-control" id="input_height" placeholder="">
 		</div>
-		<button id="button_init" type="button" class="btn btn-primary">Init</button>
+		<button id="button_init" type="button" class="btn btn-block btn-primary">Init</button>
+		
+		<hr>
+		
+		<label>Change Pointing Mode</label>
+		<button id="button_mode" type="button" class="btn btn-block btn-outline-dark" disabled>default</button>
+		
+		<hr>
+		
+		<button id="button_start_stop" type="button" class="btn btn-block btn-primary" data-status="start" disabled>Start</button>
 	</nav>
 
 	<!-- map -->
@@ -57,7 +66,10 @@
 	</div>
 	
 	<!-- script -->
+
+	<!-- import class file -->
 	<script>
+	
 		/*
 		// global variables
 		var map;
@@ -126,18 +138,18 @@
 			drawMap(8, 8);
 		})
 		*/
-		var ui;
-		ui = UserInterface
+		window.onload = () => {
+			var ui = UserInterface
 			.getUserInterface()
 			.registerUIComponents([
-				{ type: 'svg_map',      target: document.getElementById('svg_map')      },
-				{ type: 'input_width',  target: document.getElementById('input_width')  },
-				{ type: 'input_height', target: document.getElementById('input_height') },
-				{ type: 'button_init',  target: document.getElementById('button_init')  }/*,
-				{ type: 'button_start', target: document.getElementById('button_start') },
-				{ type: 'button_stop',  target: document.getElementById('button_stop')  },
-				{ type: 'button_mode',  target: document.getElementById('button_mode')  }*/
+				{ type: 'svg_map',           target: document.getElementById('svg_map')           },
+				{ type: 'input_width',       target: document.getElementById('input_width')       },
+				{ type: 'input_height',      target: document.getElementById('input_height')      },
+				{ type: 'button_init',       target: document.getElementById('button_init')       },
+				{ type: 'button_mode',       target: document.getElementById('button_mode')       },
+				{ type: 'button_start_stop', target: document.getElementById('button_start_stop') }
 			]);
+		};
 
 	</script>
 </body>
