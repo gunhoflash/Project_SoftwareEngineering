@@ -13,6 +13,7 @@ class UserInterface {
 	#pointing_mode;    // ['default', 'target', 'harzard', 'start', 'end']
 	#map_width;
 	#map_height;
+	#map_info;
 
 	// ADD-ON
 	#addonManager;
@@ -90,9 +91,15 @@ class UserInterface {
 	}
 
 	/*
+		Called by ADD-ON.
+		Update tile info from ADD-OD data
 	*/
-	updateMap() {
-		// TODO: edit it
+	updateTile(row, column, type) {
+		this.svg_rects[row][column].dataset.type = type;
+	}
+
+	updateSIMPosition(row, column) {
+		console.log(`SIM: ${row}, ${column}`);
 	}
 
 	/*
@@ -175,7 +182,20 @@ class UserInterface {
 		this.button_start_stop.innerHTML = 'Stop';
 		this.button_start_stop.disabled = false;
 		this.button_mode.disabled = true;
-		// TODO: send start signal to ADD-ON
+
+		// set map_info for ADD-ON
+		let map_info = [];
+		for (var row of this.svg_rects)
+		{
+			map_info.push([]);
+			for (var rect of row)
+			{
+				map_info.push(rect.dataset.type);
+			}
+		}
+
+		// Send start signal to ADD-ON with map data
+		this.addonManager.init(map_info);
 	}
 	
 	/*

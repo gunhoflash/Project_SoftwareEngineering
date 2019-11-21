@@ -16,7 +16,9 @@ class AddOnManager {
 	/*
 		Called by SIMManager.
 	*/
-	init(size, info) {}
+	init(map_info) {
+		console.log(`AddOnManager init`);
+	}
 
 	startRobotSimulation() {
 		// UI.updateMap
