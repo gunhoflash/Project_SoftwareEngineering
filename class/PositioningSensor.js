@@ -1,7 +1,9 @@
 class PositioningSensor extends Sensor {
 
+	constructor() {}
+
 	/*
-		Properties
+		Methods
 	*/
 
 	/*
@@ -13,7 +15,7 @@ class PositioningSensor extends Sensor {
 		return:
 			1 bit: indicates whether the SIM moved 2 tiles or not.
 	*/
-	static getSensorValue() {
+	getSensorValue() {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
 				resolve(Math.random() > 0.1 ? 0b0 : 0b1);

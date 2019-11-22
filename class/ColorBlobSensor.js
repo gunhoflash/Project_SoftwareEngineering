@@ -1,7 +1,9 @@
 class ColorBlobSensor extends Sensor {
 
+	constructor() {}
+
 	/*
-		Properties
+		Methods
 	*/
 
 	/*
@@ -12,10 +14,9 @@ class ColorBlobSensor extends Sensor {
 
 		return:
 			4 bit: each bit indicates the existence of a colorblob.
-
 	*/
 	// ISSUE: handle exception: single tile can be both of colorblob and hazard
-	static getSensorValue() {
+	getSensorValue() {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
 				let d = 0b0000;

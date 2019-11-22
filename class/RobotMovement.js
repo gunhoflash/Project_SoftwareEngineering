@@ -2,23 +2,65 @@ class RobotMovement {
 
 	/*
 		Properties
+	*/
 
-		Values
-		private direction = 0 // 0: north, 90: east 
+	#direction; // 0: north, 90: east, 180: south, 270: west
+
+	constructor() {
+		// TODO: edit it
+		this.direction = 0; // initial direction: north
+	}
+
+	/*
+		Methods
 	*/
 
 	/*
 		Called by SIMManager.
+		Rotate only 90degree clockwise.
+
+		parameter:
+			(none)
+
+		return:
+			Promise
 	*/
-	public rotate() {}
+	rotate() {
+		return new Promise((resolve, reject) => {
+			setTimeout(() => {
+				this.direction = (this.direction + 90) % 360;
+				resolve();
+			}, 1000);
+		});
+	}
 
 	/*
 		Called by SIMManager.
+
+		parameter:
+			(none)
+
+		return:
+			Promise
 	*/
-	public move() {}
+	move() {
+		return new Promise((resolve, reject) => {
+			setTimeout(() => {
+				resolve();
+			}, 1000);
+		});
+	}
 
 	/*
 		Called by SIMManager.
+
+		parameter:
+			(none)
+
+		return:
+			Promise
 	*/
-	public getDirection() {}
+	getDirection() {
+		return this.direction;
+	}
 }
