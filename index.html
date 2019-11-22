@@ -72,78 +72,7 @@
 	</div>
 	
 	<!-- script -->
-
-	<!-- import class file -->
 	<script>
-	
-		/*
-		// global variables
-		var map;
-
-		// draw map
-		drawMap = (w, h) => {
-			// get information of tiles
-			let tile = map.getAllTiles();
-
-			let x, y, color, str = '';
-			for (x = 0; x < w; x++)
-			{
-				for (y = 0; y < h; y++)
-				{
-					// calculate color
-					switch (tile[y][x])
-					{
-						case "O": color = '#00ff00'; break;
-						case "X": color = '#ff0000'; break;
-						default : color = '#ffffff'; break;
-					}
-
-					// make rectangle
-					str += `<rect
-						x="${x * 30}" y="${y * 30}" width="30" height="30"
-						r="0" rx="0" ry="0"
-						fill="${color}" stroke="#000"
-						style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); stroke-opacity: 0.2;"
-						stroke-opacity="0.2"
-						></rect>`;
-				}
-			}
-
-			// draw
-			$('#Map').html(str).attr('width', w * 30).attr('height', h * 30);
-		};
-
-		// initialize map
-		initMap = () => {
-			// get weight, height, probability
-			let w  = parseInt($('#widthInput').val() ) || 1;
-			let h  = parseInt($('#heightInput').val()) || 1;
-			let pd = parseFloat($('#pdInput').val())   || 0;
-			let pt = parseFloat($('#ptInput').val())   || 0;
-
-			// handle exceptions
-			if (w < 1) w = 1;
-			if (h < 1) h = 1;
-			if (w > 999) w = 999;
-			if (h > 999) h = 999;
-			if (pd < 0) pd = 0;
-			if (pt < 0) pt = 0;
-			if (pd > 0.99) pd = 0.99;
-			if (pt > 0.99) pt = 0.99;
-
-			// create a new map
-			map = new Map(w, h, pd, pt);
-
-			// draw the map
-			drawMap(w, h);
-		};
-
-		$(document).ready(() => {
-			map = new Map(8, 8, 0, 0);
-			$('#Btn_InitMap').click(initMap);
-			drawMap(8, 8);
-		})
-		*/
 		window.onload = () => {
 			var ui = UserInterface
 			.getUserInterface()
@@ -156,7 +85,6 @@
 				{ type: 'button_start_stop', target: document.getElementById('button_start_stop') }
 			]);
 		};
-
 	</script>
 </body>
 </html>
