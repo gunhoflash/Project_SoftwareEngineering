@@ -38,7 +38,7 @@ class UserInterface {
 		this.status = 'init';
 		this.pointing_mode = ['default', 'target', 'hazard', 'start', 'end'];
 		
-		this.addonManager = new AddOnManager();
+		this.addonManager = new AddOnManager(this);
 	}
 
 	/*

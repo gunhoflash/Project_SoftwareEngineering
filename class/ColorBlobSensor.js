@@ -1,7 +1,5 @@
 class ColorBlobSensor extends Sensor {
 
-	constructor() {}
-
 	/*
 		Methods
 	*/

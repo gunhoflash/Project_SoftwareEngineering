@@ -1,7 +1,5 @@
 class HazardSensor extends Sensor {
 
-	constructor() {}
-
 	/*
 		Methods
 	*/

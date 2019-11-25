@@ -2,16 +2,23 @@ class AddOnManager {
 
 	/*
 		Properties
-
-		private userInterface
-		private simManager
-		private map
-		private path
-
 	*/
 
-	constructor() {
+	#userInterface;
+	#simManager;
+	#map;
+	#path;
+
+	constructor(userInterface) {
+		this.userInterface = userInterface;
+		this.simManager = new SIMManager();
+		this.map = new Map();
+		this.path = new Path();
 	}
+
+	/*
+		Methods
+	*/
 
 	/*
 		Called by SIMManager.

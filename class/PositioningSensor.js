@@ -1,7 +1,5 @@
 class PositioningSensor extends Sensor {
 
-	constructor() {}
-
 	/*
 		Methods
 	*/
