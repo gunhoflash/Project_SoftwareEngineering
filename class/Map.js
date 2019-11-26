@@ -4,10 +4,14 @@ class Map {
 		Properties
 	*/
 
-	static tile_default   = 0;
-	static tile_target    = 1;
-	static tile_hazard    = 2;
-	static tile_colorblob = 3;
+	static tile_type = {
+		default   : 0,
+		target    : 1,
+		hazard    : 2,
+		colorblob : 3,
+		start     : 4,
+		end       : 5
+	}
 
 	#map_width;
 	#map_height;
@@ -27,30 +31,14 @@ class Map {
 	/*
 		Called by AddOnManager.
 	*/
-	initMap(width, height) {
-		let i, j;
+	init(map_info, width, height) {
 
-		// init map size
+		// set map size
 		this.width = width;
 		this.height = height;
 
-		// init tiles
-		this.map_info = [];
-		for (i = 0; i < height; i++) {
-			this.map_info[i] = [];
-			for (j = 0; j < width; j++) {
-				this.map_info[i][j] = Map.tile_default;
-			}
-		}
-	}
-
-	/*
-		Called by AddOnManager.
-	*/
-	setTarget(row, column) {
-		if (isValidPosition(row, column)) {
-			this.map_info[row][column] = Map.tile_target;
-		}
+		// set tiles
+		this.map_info = map_info;
 	}
 
 	/*
@@ -58,7 +46,7 @@ class Map {
 	*/
 	setHazard(row, column) {
 		if (isValidPosition(row, column)) {
-			this.map_info[row][column] = Map.tile_hazard;
+			this.map_info[row][column] = Map.tile_type.hazard;
 		}
 	}
 
@@ -68,25 +56,39 @@ class Map {
 	*/
 	setColorBlob(row, column) {
 		if (isValidPosition(row, column)) {
-			this.map_info[row][column] = Map.tile_colorblob;
+			this.map_info[row][column] = Map.tile_type.colorblob;
 		}
 	}
 
 	/*
-		Called by AddOnManager.
+		Called by Path.
+		Return all target points for pathfinding.
 	*/
-	getTarget() {}
-
+	getTargets() {
+		let i, j, targets = [];
+		for (i = 0; i < this.map_height; i++) {
+			for (j = 0; j < this.map_width; j++) {
+				if (this.map_info[i][j] == Map.tile_type.target)
+					targets.push([i, j]);
+			}
+		}
+		return targets;
+	}
+	
 	/*
-		Called by AddOnManager.
+		Called by Path.
+		Return all hazard points for pathfinding.
 	*/
-	getHazard() {}
-
-	/*
-		Called by AddOnManager.
-	*/
-	getColorBlob() {}
-
+	getHazards() {
+		let i, j, hazards = [];
+		for (i = 0; i < this.map_height; i++) {
+			for (j = 0; j < this.map_width; j++) {
+				if (this.map_info[i][j] == Map.tile_type.hazard)
+				hazards.push([i, j]);
+			}
+		}
+		return hazards;
+	}
 	/*
 		Called by this.setHazard, this.setColorBlob.
 	*/

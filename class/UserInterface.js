@@ -36,7 +36,13 @@ class UserInterface {
 		// TODO: edit something
 		// TODO: init variables
 		this.status = 'init';
-		this.pointing_mode = ['default', 'target', 'hazard', 'start', 'end'];
+		this.pointing_mode = [
+			Map.tile_type.default,
+			Map.tile_type.target,
+			Map.tile_type.hazard,
+			Map.tile_type.start,
+			Map.tile_type.end
+		];
 		
 		this.addonManager = new AddOnManager(this);
 	}
@@ -113,7 +119,7 @@ class UserInterface {
 		// set the rect's type
 		let type = this.pointing_mode[0];
 		if (event.target.dataset.type == type) {
-			event.target.dataset.type = 'default';
+			event.target.dataset.type = Map.tile_type.default;
 			return;
 		}
 
@@ -122,10 +128,10 @@ class UserInterface {
 			and there is already a tile with same type,
 			change that tile's type to 'default'
 		*/
-		if (type == 'start' || type == 'end') {
+		if (type == Map.tile_type.start || type == Map.tile_type.end) {
 			for (let rect of this.svg_rects.flat()) {
 				if (rect.dataset.type == type) {
-					rect.dataset.type = 'default';
+					rect.dataset.type = Map.tile_type.default;
 					break;
 				}
 			}
@@ -195,7 +201,7 @@ class UserInterface {
 		}
 
 		// Send start signal to ADD-ON with map data
-		this.addonManager.init(map_info);
+		this.addonManager.init(map_info, this.map_width, this.map_height);
 	}
 	
 	/*
@@ -246,7 +252,7 @@ class UserInterface {
 				tile.setAttribute('class', 'tile');
 				tile.setAttribute('x', j * 30);
 				tile.setAttribute('y', i * 30);
-				tile.dataset.type = 'default';
+				tile.dataset.type = Map.tile_type.default;
 				this.svg_map.appendChild(tile);
 				this.svg_rects[i].push(tile);
 			}
