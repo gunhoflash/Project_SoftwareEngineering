@@ -6,12 +6,12 @@ class Map {
 
 	static tile_type = {
 		default   : 0,
-		target    : 1,
-		hazard    : 2,
+		hazard    : 1,
+		target    : 2,
 		colorblob : 3,
 		start     : 4,
 		end       : 5
-	}
+	};
 
 	#map_width;
 	#map_height;
@@ -33,12 +33,15 @@ class Map {
 	*/
 	init(map_info, width, height) {
 
+		let i, j;
+
 		// set map size
 		this.width = width;
 		this.height = height;
 
-		// set tiles
+		// save tiles
 		this.map_info = map_info;
+		console.log(`Map.map_info = ${map_info}`);
 	}
 
 	/*
@@ -58,6 +61,14 @@ class Map {
 		if (isValidPosition(row, column)) {
 			this.map_info[row][column] = Map.tile_type.colorblob;
 		}
+	}
+
+	/*
+		Called by this.init() and Path.
+		Return 
+	*/
+	getMapInfo() {
+		return this.map_info;
 	}
 
 	/*
@@ -84,15 +95,46 @@ class Map {
 		for (i = 0; i < this.map_height; i++) {
 			for (j = 0; j < this.map_width; j++) {
 				if (this.map_info[i][j] == Map.tile_type.hazard)
-				hazards.push([i, j]);
+					hazards.push([i, j]);
 			}
 		}
 		return hazards;
 	}
+
+	/*
+		Called by ADD-ON.
+		Return start point.
+	*/
+	getStartPoint() {
+		let i, j;
+		for (i = 0; i < this.map_height; i++) {
+			for (j = 0; j < this.map_width; j++) {
+				if (this.map_info[i][j] == Map.tile_type.start)
+					return [i, j];
+			}
+		}
+		return [0, 0];
+	}
+
+	/*
+		Called by Path.
+		Return end point.
+	*/
+	getEndPoint() {
+		let i, j;
+		for (i = 0; i < this.map_height; i++) {
+			for (j = 0; j < this.map_width; j++) {
+				if (this.map_info[i][j] == Map.tile_type.end)
+					return [i, j];
+			}
+		}
+		return [0, 0];
+	}
+
 	/*
 		Called by this.setHazard, this.setColorBlob.
 	*/
-	#isValidPosition(row, column) {
+	isValidPosition(row, column) {
 		if (row < 0 || row >= height) return false;
 		if (column < 0 || column >= width) return false;
 		return true;

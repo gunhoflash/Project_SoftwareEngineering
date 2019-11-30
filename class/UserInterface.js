@@ -190,18 +190,18 @@ class UserInterface {
 		this.button_mode.disabled = true;
 
 		// set map_info for ADD-ON
-		let map_info = [];
-		for (var row of this.svg_rects)
-		{
+		let i, j, map_info = [];
+		for (i = 0; i < this.svg_rects.length; i++) {
 			map_info.push([]);
-			for (var rect of row)
-			{
-				map_info.push(rect.dataset.type);
+			for (j = 0; j < this.svg_rects[i].length; j++) {
+				map_info[i].push(this.svg_rects[i][j].dataset.type);
 			}
 		}
 
 		// Send start signal to ADD-ON with map data
 		this.addonManager.init(map_info, this.map_width, this.map_height);
+
+		this.addonManager.startRobotSimulation();
 	}
 	
 	/*
@@ -215,6 +215,7 @@ class UserInterface {
 		this.button_start_stop.disabled = false;
 		this.button_mode.disabled = false;
 		// TODO: send stop signal to ADD-ON
+		this.addonManager.stopRobotSimulation();
 	}
 
 	
@@ -224,9 +225,8 @@ class UserInterface {
 	*/
 	changePointingMode() {
 		this.pointing_mode.push(this.pointing_mode.shift());
-		this.button_mode.innerHTML = this.pointing_mode[0];
+		this.button_mode.innerHTML = Object.keys(Map.tile_type).find(key => Map.tile_type[key] == this.pointing_mode[0]);
 	}
-
 
 	/*
 		Initialize all tiles
@@ -255,6 +255,25 @@ class UserInterface {
 				tile.dataset.type = Map.tile_type.default;
 				this.svg_map.appendChild(tile);
 				this.svg_rects[i].push(tile);
+			}
+		}
+	}
+
+	updatePosition(position) {
+		// TODO: show robot icon
+		console.log(`updatePosition(${position})`);
+	}
+	
+	updateDirection(direction) {
+		// TODO: show robot icon
+		console.log(`updateDirection(${direction})`);
+	}
+
+	updateMapInfo(map_info) {
+		let i, j;
+		for (i = 0; i < this.map_height; i++) {
+			for (j = 0; j < this.map_width; j++) {
+				this.updateTile(i, j, map_info[i][j]);
 			}
 		}
 	}

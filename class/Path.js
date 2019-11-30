@@ -6,8 +6,8 @@ class Path {
 
 	#start_point;
 	#end_point;
-	#entire_target_point;
-	#remained_target_point;
+	#entire_waypoint;
+	#remained_waypoint; // include target points and end point
 	#remained_path;
 
 	constructor() {
@@ -17,18 +17,20 @@ class Path {
 	/*
 		Called by AddOnManager.
 	*/
-	initPoint(start_point, end_point, target_points) {
-		this.start_point           = start_point;
-		this.end_point             = end_point;
-		this.entire_target_point   = target_points;
-		this.remained_target_point = this.entire_target_point.concat();
+	init(currentPosition, currentDirection, targets, end) {
+		this.start_point       = start_point;
+		this.end_point         = end_point;
+		this.entire_waypoint   = target_points;
+		this.remained_waypoint = this.entire_waypoint.concat();
 		this.remained_path = [];
 	}
 
 	/*
 		Called by AddOnManager.
 	*/
-	calculatePath(map, currentPosition) {}
+	calculatePath(map, currentPosition, currentDirection) {
+		// return path: ['move', 'rotate', ... ]
+	}
 	
 	/*
 		Called by AddOnManager.
