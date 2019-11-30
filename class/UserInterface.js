@@ -21,6 +21,8 @@ class UserInterface {
 	// UI components
 	#svg_map;
 	#svg_rects;        // [rect, ...];
+	#svg_robot;
+	#svg_robot_body;
 	#input_width;
 	#input_height;
 	#button_init;
@@ -71,6 +73,12 @@ class UserInterface {
 				case "svg_map":
 					this.svg_map = component.target;
 					this.svg_map.addEventListener('mousedown', this.setPoint.bind(this));
+					break;
+				case "svg_robot":
+					this.svg_robot = component.target;
+					break;
+				case "svg_robot_body":
+					this.svg_robot_body = component.target;
 					break;
 				case "input_width":
 					this.input_width = component.target;
@@ -253,7 +261,7 @@ class UserInterface {
 				tile.setAttribute('x', j * 30);
 				tile.setAttribute('y', i * 30);
 				tile.dataset.type = Map.tile_type.default;
-				this.svg_map.appendChild(tile);
+				this.svg_map.prepend(tile);
 				this.svg_rects[i].push(tile);
 			}
 		}
@@ -262,11 +270,14 @@ class UserInterface {
 	updatePosition(position) {
 		// TODO: show robot icon
 		console.log(`updatePosition(${position})`);
+		this.svg_robot.setAttribute('x', position[1] * 30);
+		this.svg_robot.setAttribute('y', position[0] * 30);
 	}
 	
 	updateDirection(direction) {
 		// TODO: show robot icon
 		console.log(`updateDirection(${direction})`);
+		this.svg_robot_body.style.transform = `rotate(${direction}deg)`;
 	}
 
 	updateMapInfo(map_info) {

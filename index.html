@@ -37,6 +37,16 @@
 		rect.tile[data-type="3"] { fill: #0000ff; } /* colorblob */
 		rect.tile[data-type="4"] { fill: #ff00ff; } /* start     */
 		rect.tile[data-type="5"] { fill: #ffff00; } /* end       */
+
+		#svg_robot {
+			overflow:visible;
+		}
+		#svg_robot_body {
+			fill:#fafafa;
+			transform: rotate(0deg);
+			transform-origin: 15px 15px;
+		}
+
 	</style>
 </head>
 <body class="d-flex vw-100 vh-100">
@@ -70,7 +80,18 @@
 	<!-- map -->
 	<div class="d-flex flex-grow-1 overflow-auto">
 		<div class="p-4 p-md-5 m-auto">
-			<svg id="svg_map" class="shadow"></svg>
+			<svg id="svg_map" class="shadow">
+				<svg id="svg_robot" x="20" y="20">
+					<defs>
+						<filter id="f3" x="-10%" y="-10%" width="120%" height="120%">
+							<feOffset result="offOut" in="SourceAlpha" dx="0" dy="0" />
+							<feGaussianBlur result="blurOut" in="offOut" stdDeviation="1" />
+							<feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+						</filter>
+					</defs>
+					<polygon id="svg_robot_body" points="15,5 25,25 15,20 5,25" filter="url(#f3)" />
+				</svg>
+			</svg>
 		</div>
 	</div>
 	
@@ -81,6 +102,8 @@
 			.getUserInterface()
 			.registerUIComponents([
 				{ type: 'svg_map',           target: document.getElementById('svg_map')           },
+				{ type: 'svg_robot',         target: document.getElementById('svg_robot')         },
+				{ type: 'svg_robot_body',    target: document.getElementById('svg_robot_body')    },
 				{ type: 'input_width',       target: document.getElementById('input_width')       },
 				{ type: 'input_height',      target: document.getElementById('input_height')      },
 				{ type: 'button_init',       target: document.getElementById('button_init')       },
