@@ -41,7 +41,6 @@ class AddOnManager {
 		this.status = true;
 
 		// make initial path
-		this.path.initPoint(this.map.getStartPoint(), this.map.getTargets());
 		this.path.calculatePath(this.map, this.simManager.getPosition(), this.simManager.getDirection());
 
 		while (this.status) {
@@ -106,10 +105,8 @@ class AddOnManager {
 			}
 
 			// calculate a new path
-			if (needNewPath) {
-				this.path.initPoint(currentPosition, this.map.getTargets());
+			if (needNewPath)
 				this.path.calculatePath(this.map, currentPosition, currentDirection);
-			}
 			
 			// draw next command
 			let nextCommand = this.path.getNextCommand();
