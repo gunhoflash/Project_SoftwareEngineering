@@ -154,7 +154,6 @@ class UserInterface {
 		Get the map size from <input> components.
 	*/
 	initMap() {
-		// TODO: edit it
 		this.stopSearching();
 
 		// set size

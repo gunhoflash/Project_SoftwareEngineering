@@ -20,8 +20,6 @@ class HazardSensor extends Sensor {
 		return:
 			1 bit: indicates the existence of a hazard.
 	*/
-	// ISSUE: handle exception: single tile can be both of colorblob and hazard
-	// ISSUE: need to check the tile where SIM located since of 2-tile-moving error.
 	getSensorValue(position) {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {

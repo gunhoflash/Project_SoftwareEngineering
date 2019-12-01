@@ -11,11 +11,11 @@ class AddOnManager {
 	#status;
 
 	constructor(userInterface) {
-		this.map = new Map();
-		this.path = new Path();
+		this.map           = new Map();
+		this.path          = new Path();
 		this.userInterface = userInterface;
-		this.simManager = new SIMManager(this.map);
-		this.status = false;
+		this.simManager    = new SIMManager(this.map);
+		this.status        = false;
 	}
 
 	/*
@@ -45,10 +45,10 @@ class AddOnManager {
 		this.path.calculatePath(this.map, this.simManager.getPosition(), this.simManager.getDirection());
 
 		while (this.status) {
-			let currentPosition = this.simManager.getPosition();
-			let nextPosition = this.simManager.getPosition(true);
+			let currentPosition  = this.simManager.getPosition();
+			let nextPosition     = this.simManager.getPosition(true);
 			let currentDirection = this.simManager.getDirection();
-			let needNewPath = false;
+			let needNewPath      = false;
 
 			this.userInterface.updatePosition(currentPosition);
 			this.userInterface.updateDirection(currentDirection);
@@ -61,9 +61,9 @@ class AddOnManager {
 			let positioningPromise = this.simManager.readSensor('positioning');                // 1 bit
 
 			// wait
-			hazardPromise.then(data => { console.log(data); hazard = data; });
-			colorBlobPromise.then(data => { console.log(data); colorBlob = data; });
-			positioningPromise.then(data => { console.log(data); positioning = data; });
+			hazardPromise.then(data => { hazard = data; });
+			colorBlobPromise.then(data => { colorBlob = data; });
+			positioningPromise.then(data => { positioning = data; });
 			await hazardPromise;
 			await colorBlobPromise;
 			await positioningPromise;
@@ -74,26 +74,6 @@ class AddOnManager {
 			// read all sensors
 			console.log(`read all sensors ${hazard}, ${colorBlob}, ${positioning}`);
 
-			// hazard found
-			if (hazard) {
-				this.map.setHazard(nextPosition[0], nextPosition[1]);
-				needNewPath = true;
-			}
-
-			// colorBlobs found
-			if (colorBlob & 0b1000) {
-				this.map.setColorBlob(currentPosition[0] - 1, currentPosition[1]);
-			}
-			if (colorBlob & 0b0100) {
-				this.map.setColorBlob(currentPosition[0] + 1, currentPosition[1]);
-			}
-			if (colorBlob & 0b0010) {
-				this.map.setColorBlob(currentPosition[0], currentPosition[1] - 1);
-			}
-			if (colorBlob & 0b0001) {
-				this.map.setColorBlob(currentPosition[0], currentPosition[1] + 1);
-			}
-
 			// adjust position
 			// TODO: handle excecption: robot run out from the map
 			if (positioning) {
@@ -102,28 +82,43 @@ class AddOnManager {
 				needNewPath = true;
 			}
 
+			// TODO: read hazard/colorBlob sensors
+			// TODO: update map 
+			// TODO: calculate a new path
+
+			// hazard found
+			if (hazard) {
+				this.map.setHazard(nextPosition[0], nextPosition[1]);
+				needNewPath = true;
+			}
+
+			// colorBlobs found
+			if (colorBlob & 0b1000) this.map.setColorBlob(currentPosition[0] - 1, currentPosition[1]);
+			if (colorBlob & 0b0100) this.map.setColorBlob(currentPosition[0] + 1, currentPosition[1]);
+			if (colorBlob & 0b0010) this.map.setColorBlob(currentPosition[0], currentPosition[1] - 1);
+			if (colorBlob & 0b0001) this.map.setColorBlob(currentPosition[0], currentPosition[1] + 1);
+
+		
 			// check if current position is on target
 			if (this.map.isTarget(currentPosition[0], currentPosition[1])) {
 				this.map.setTargetVisited(currentPosition[0], currentPosition[1]);
 				needNewPath = true;
 			}
 
-			// calculate new path
+			// calculate a new path
 			if (needNewPath) {
-				console.log(`re-calculate path`);
 				this.path.initPoint(currentPosition, this.map.getTargets());
 				this.path.calculatePath(this.map, currentPosition, currentDirection);
 			}
 			
-			// check whether the path is remained or not
+			// draw next command
 			let nextCommand = this.path.getNextCommand();
-			console.log(`next command is ${nextCommand}, remained path is ${this.path.getPath()}`);
 			if (nextCommand != null) {
-				// move or rotate
+				// order SIM manager to move or rotate
 				console.log(`Do the next command:${nextCommand}`);
 				await this.simManager.driveMotor(nextCommand);
 			} else {
-				// if the path is empty, end
+				// if there is no command, end
 				if (this.map.getTargets().length > 0) {
 					alert(`목표를 달성할 수 없습니다!`);
 					console.log(`목표를 달성할 수 없습니다!`);
@@ -138,7 +133,6 @@ class AddOnManager {
 			this.userInterface.updatePosition(currentPosition);
 			this.userInterface.updateDirection(currentDirection);
 			this.userInterface.updateMapInfo(this.map.getMapInfo());
-
 		}
 
 		console.log(`End Robot Simulation`);
