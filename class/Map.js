@@ -10,7 +10,6 @@ class Map {
 		target    : 2,
 		colorblob : 3,
 		start     : 4,
-		end       : 5,
 		hazard_hidden    : 6,
 		colorblob_hidden : 7,
 		target_visited   : 8
@@ -184,21 +183,6 @@ class Map {
 		for (i = 0; i < this.map_height; i++) {
 			for (j = 0; j < this.map_width; j++) {
 				if (this.map_info[i][j] == Map.tile_type.start)
-					return [i, j];
-			}
-		}
-		return [0, 0];
-	}
-
-	/*
-		Called by Path.
-		Return end point.
-	*/
-	getEndPoint() {
-		let i, j;
-		for (i = 0; i < this.map_height; i++) {
-			for (j = 0; j < this.map_width; j++) {
-				if (this.map_info[i][j] == Map.tile_type.end)
 					return [i, j];
 			}
 		}

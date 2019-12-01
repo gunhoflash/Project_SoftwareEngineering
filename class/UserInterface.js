@@ -10,7 +10,7 @@ class UserInterface {
 
 	// variables
 	#status;           // 'init', 'stop', 'start'
-	#pointing_mode;    // ['default', 'target', 'harzard', 'start', 'end']
+	#pointing_mode;    // ['default', 'target', 'harzard', 'start']
 	#map_width;
 	#map_height;
 	#map_info;
@@ -42,8 +42,7 @@ class UserInterface {
 			Map.tile_type.default,
 			Map.tile_type.target,
 			Map.tile_type.hazard,
-			Map.tile_type.start,
-			Map.tile_type.end
+			Map.tile_type.start
 		];
 		
 		this.addonManager = new AddOnManager(this);
@@ -118,7 +117,7 @@ class UserInterface {
 
 	/*
 		Called by click trigger.
-		Set the harzard/target/start/end points.
+		Set the default/harzard/target/start points.
 	*/
 	setPoint(event) {
 		// handle exception: no rect
@@ -132,11 +131,10 @@ class UserInterface {
 		}
 
 		/*
-			If the selected type is 'start' or 'end'
-			and there is already a tile with same type,
-			change that tile's type to 'default'
+			If the selected type is 'start',
+			change the type of start tile that already exists to default.
 		*/
-		if (type == Map.tile_type.start || type == Map.tile_type.end) {
+		if (type == Map.tile_type.start) {
 			for (let rect of this.svg_rects.flat()) {
 				if (rect.dataset.type == type) {
 					rect.dataset.type = Map.tile_type.default;
@@ -144,6 +142,8 @@ class UserInterface {
 				}
 			}
 		}
+
+		// set type of the selected tile
 		event.target.dataset.type = type;
 	}
 
@@ -228,7 +228,7 @@ class UserInterface {
 	
 	/*
 		Called by click trigger.
-		Change pointing mode; i.e. harzard/target/start/end/none
+		Change pointing mode; i.e. default/harzard/target/start
 	*/
 	changePointingMode() {
 		this.pointing_mode.push(this.pointing_mode.shift());

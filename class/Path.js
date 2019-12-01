@@ -4,7 +4,6 @@ class Path {
 		Properties
 	*/
 	#start_point;
-	#end_point;
 	#entire_target_point;
 	#remained_target_point;
 	#remained_path;
