@@ -277,7 +277,7 @@ class UserInterface {
 	updateDirection(direction) {
 		// TODO: show robot icon
 		console.log(`updateDirection(${direction})`);
-		this.svg_robot_body.style.transform = `rotate(${direction}deg)`;
+		this.svg_robot_body.style.transform = `rotate(${direction * 90}deg)`;
 	}
 
 	updateMapInfo(map_info) {

@@ -12,6 +12,11 @@ class SIMManager {
 		west  : 3
 	};
 
+	static drive_type = {
+		move   : 0,
+		rotate : 1
+	};
+
 	#robotMovement;
 	#hazardSensor;
 	#colorBlobSensor;
@@ -20,10 +25,10 @@ class SIMManager {
 	#currentPosition;
 	#currentDirection;
 
-	constructor() {
+	constructor(map) {
 		this.robotMovement     = new RobotMovement();
-		this.hazardSensor      = new HazardSensor();
-		this.colorBlobSensor   = new ColorBlobSensor();
+		this.hazardSensor      = new HazardSensor(map);
+		this.colorBlobSensor   = new ColorBlobSensor(map);
 		this.positioningSensor = new PositioningSensor();
 
 		this.setPosition([0, 0]);
@@ -44,9 +49,9 @@ class SIMManager {
 			Promise
 	*/
 	driveMotor(type) {
-		if (type == 'move') {
-			return this.robotMovement.move().then(setPosition);
-		} else if (type == 'rotate') {
+		if (type == SIMManager.drive_type.move) {
+			return this.robotMovement.move().then(this.setPosition.bind(this));
+		} else if (type == SIMManager.drive_type.rotate) {
 			return this.robotMovement.rotate().then(() => {
 				// Rotate only 90 degree clockwise.
 				switch (this.getDirection()) {
@@ -79,10 +84,10 @@ class SIMManager {
 		return:
 			Promise
 	*/
-	readSensor(type) {
+	readSensor(type, position) {
 		switch (type) {
-			case 'hazard'      : return this.hazardSensor.getSensorValue();
-			case 'colorBlob'   : return this.colorBlobSensor.getSensorValue();
+			case 'hazard'      : return this.hazardSensor.getSensorValue(position);
+			case 'colorBlob'   : return this.colorBlobSensor.getSensorValue(position);
 			case 'positioning' : return this.positioningSensor.getSensorValue();
 			default            : throw Error(`Unexpected type: ${type}`);
 		}
@@ -110,8 +115,18 @@ class SIMManager {
 		return:
 			(none)
 	*/
-	getPosition() {
-		return this.currentPosition;
+	getPosition(next = false) {
+		if (next) {
+			let nextPosition = this.currentPosition.slice();
+			switch (this.getDirection()) {
+				case SIMManager.direction_type.north : nextPosition[0]--; break;
+				case SIMManager.direction_type.east  : nextPosition[1]++; break;
+				case SIMManager.direction_type.south : nextPosition[0]++; break;
+				case SIMManager.direction_type.west  : nextPosition[1]--; break;
+				default : throw Error(`Unexpected direction: ${this.currentDirection}`);
+			}
+			return nextPosition;
+		} else return this.currentPosition;
 	}
 
 	/*
@@ -143,13 +158,8 @@ class SIMManager {
 			this.currentPosition = position;
 		} else {
 			// move forward
-			switch (this.getDirection()) {
-				case SIMManager.direction_type.north : this.currentPosition[0]--; break;
-				case SIMManager.direction_type.east  : this.currentPosition[1]++; break;
-				case SIMManager.direction_type.south : this.currentPosition[0]++; break;
-				case SIMManager.direction_type.west  : this.currentPosition[1]--; break;
-				default : throw Error(`Unexpected direction: ${this.currentDirection}`);
-			}
+			let nextPosition = this.getPosition(true);
+			this.currentPosition = nextPosition;
 		}
 	}
 }

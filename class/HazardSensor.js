@@ -1,5 +1,12 @@
 class HazardSensor extends Sensor {
 
+	#map;
+
+	constructor(map) {
+		super();
+		this.map = map;
+	}
+
 	/*
 		Methods
 	*/
@@ -15,11 +22,11 @@ class HazardSensor extends Sensor {
 	*/
 	// ISSUE: handle exception: single tile can be both of colorblob and hazard
 	// ISSUE: need to check the tile where SIM located since of 2-tile-moving error.
-	getSensorValue() {
+	getSensorValue(position) {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
-				resolve(Math.random() > 0.1 ? 0b0 : 0b1);
-			}, 1000);
+				resolve(this.map.isHazard(position[0], position[1]) ? 0b1 : 0b0);
+			}, 500);
 		});
 	}
 }

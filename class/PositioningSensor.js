@@ -16,8 +16,9 @@ class PositioningSensor extends Sensor {
 	getSensorValue() {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
-				resolve(Math.random() > 0.1 ? 0b0 : 0b1);
-			}, 1000);
+				resolve(0b0);
+				// resolve(Math.random() > 0.1 ? 0b0 : 0b1);
+			}, 500);
 		});
 	}
 }

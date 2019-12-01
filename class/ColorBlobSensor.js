@@ -1,5 +1,12 @@
 class ColorBlobSensor extends Sensor {
 
+	#map;
+
+	constructor(map) {
+		super();
+		this.map = map;
+	}
+
 	/*
 		Methods
 	*/
@@ -14,16 +21,18 @@ class ColorBlobSensor extends Sensor {
 			4 bit: each bit indicates the existence of a colorblob.
 	*/
 	// ISSUE: handle exception: single tile can be both of colorblob and hazard
-	getSensorValue() {
+	getSensorValue(position) {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
-				let d = 0b0000;
-				d |= (Math.random() > 0.1) ? 0b0000 : 0b1000; // top
-				d |= (Math.random() > 0.1) ? 0b0000 : 0b0100; // bottom
-				d |= (Math.random() > 0.1) ? 0b0000 : 0b0010; // left
-				d |= (Math.random() > 0.1) ? 0b0000 : 0b0001; // right
+				let row    = position[0];
+				let column = position[1];
+				let d      = 0b0000;
+				d |= this.map.isColorBlob(row - 1, column) ? 0b1000 : 0b0000; // top
+				d |= this.map.isColorBlob(row + 1, column) ? 0b0100 : 0b0000; // bottom
+				d |= this.map.isColorBlob(row, column - 1) ? 0b0010 : 0b0000; // left
+				d |= this.map.isColorBlob(row, column + 1) ? 0b0001 : 0b0000; // right
 				resolve(d);
-			}, 1000);
+			}, 500);
 		});
 	}
 }

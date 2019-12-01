@@ -14,5 +14,5 @@ class Sensor {
 		Called by SIMManager.
 		For singleton pattern.
 	*/
-	getSensorValue() {}
+	getSensorValue(position = null) {}
 }
