@@ -15,15 +15,15 @@ class Map {
 		target_visited   : 8
 	};
 
-	#map_width;
-	#map_height;
-	#map_info;
+	#width;
+	#height;
+	#info;
 
 	constructor() {
 		console.log(`Map here`);
-		this.map_width = 0;
-		this.map_height = 0;
-		this.map_info = [];
+		this.width = 0;
+		this.height = 0;
+		this.info = [];
 	}
 
 	/*
@@ -33,14 +33,14 @@ class Map {
 	/*
 		Called by AddOnManager.
 	*/
-	init(map_info, width, height) {
+	init(info, width, height) {
 
 		let i, j;
 
 		// set map size and tiles
-		this.map_info   = map_info;
-		this.map_width  = width;
-		this.map_height = height;
+		this.info   = info;
+		this.width  = width;
+		this.height = height;
 
 		// return;
 
@@ -50,7 +50,7 @@ class Map {
 		// extract all default points (shuffled)
 		for (i = 0; i < height; i++) {
 			for (j = 0; j < width; j++) {
-				if (map_info[i][j] == Map.tile_type.default) {
+				if (info[i][j] == Map.tile_type.default) {
 					// push a point with random index
 					defaults.splice(parseInt(Math.random() * (defaults.length + 1)), 0, [i, j]);
 				}
@@ -65,11 +65,11 @@ class Map {
 		i = 0;
 		while (i < defaults.length) {
 			if (num_colorblob > 0) {
-				this.map_info[defaults[i][0]][defaults[i][1]] = Map.tile_type.colorblob_hidden;
+				this.info[defaults[i][0]][defaults[i][1]] = Map.tile_type.colorblob_hidden;
 				num_colorblob--;
 			}
 			else if (num_hazard > 0) {
-				this.map_info[defaults[i][0]][defaults[i][1]] = Map.tile_type.hazard_hidden;
+				this.info[defaults[i][0]][defaults[i][1]] = Map.tile_type.hazard_hidden;
 				num_hazard--;
 			} else break;
 			i++;
@@ -81,8 +81,8 @@ class Map {
 	*/
 	isHazard(row, column) {
 		if (this.isValidPosition(row, column)) {
-			return (this.map_info[row][column] == Map.tile_type.hazard
-				|| this.map_info[row][column] == Map.tile_type.hazard_hidden);
+			return (this.info[row][column] == Map.tile_type.hazard
+				|| this.info[row][column] == Map.tile_type.hazard_hidden);
 		} else return false;
 	}
 
@@ -91,8 +91,8 @@ class Map {
 	*/
 	isColorBlob(row, column) {
 		if (this.isValidPosition(row, column)) {
-			return (this.map_info[row][column] == Map.tile_type.colorblob
-				|| this.map_info[row][column] == Map.tile_type.colorblob_hidden);
+			return (this.info[row][column] == Map.tile_type.colorblob
+				|| this.info[row][column] == Map.tile_type.colorblob_hidden);
 		} else return false;
 	}
 
@@ -101,8 +101,8 @@ class Map {
 	*/
 	isTarget(row, column) {
 		if (this.isValidPosition(row, column)) {
-			return (this.map_info[row][column] == Map.tile_type.target
-				|| this.map_info[row][column] == Map.tile_type.target_visited);
+			return (this.info[row][column] == Map.tile_type.target
+				|| this.info[row][column] == Map.tile_type.target_visited);
 		} else return false;
 	}
 
@@ -112,7 +112,7 @@ class Map {
 	setHazard(row, column) {
 		console.log(`setHazard(${row}, ${column})`);
 		if (this.isValidPosition(row, column)) {
-			this.map_info[row][column] = Map.tile_type.hazard;
+			this.info[row][column] = Map.tile_type.hazard;
 		}
 	}
 	
@@ -122,7 +122,7 @@ class Map {
 	setColorBlob(row, column) {
 		console.log(`setColorBlob(${row}, ${column})`);
 		if (this.isValidPosition(row, column)) {
-			this.map_info[row][column] = Map.tile_type.colorblob;
+			this.info[row][column] = Map.tile_type.colorblob;
 		}
 	}
 
@@ -132,7 +132,7 @@ class Map {
 	setTargetVisited(row, column) {
 		console.log(`setTargetVisited(${row}, ${column})`);
 		if (this.isValidPosition(row, column)) {
-			this.map_info[row][column] = Map.tile_type.target_visited;
+			this.info[row][column] = Map.tile_type.target_visited;
 		}
 	}
 
@@ -141,7 +141,7 @@ class Map {
 		Return 
 	*/
 	getMapInfo() {
-		return this.map_info;
+		return this.info;
 	}
 
 	/*
@@ -150,9 +150,9 @@ class Map {
 	*/
 	getTargets() {
 		let i, j, targets = [];
-		for (i = 0; i < this.map_height; i++) {
-			for (j = 0; j < this.map_width; j++) {
-				if (this.map_info[i][j] == Map.tile_type.target)
+		for (i = 0; i < this.height; i++) {
+			for (j = 0; j < this.width; j++) {
+				if (this.info[i][j] == Map.tile_type.target)
 					targets.push([i, j]);
 			}
 		}
@@ -165,9 +165,9 @@ class Map {
 	*/
 	getHazards() {
 		let i, j, hazards = [];
-		for (i = 0; i < this.map_height; i++) {
-			for (j = 0; j < this.map_width; j++) {
-				if (this.map_info[i][j] == Map.tile_type.hazard)
+		for (i = 0; i < this.height; i++) {
+			for (j = 0; j < this.width; j++) {
+				if (this.info[i][j] == Map.tile_type.hazard)
 					hazards.push([i, j]);
 			}
 		}
@@ -180,9 +180,9 @@ class Map {
 	*/
 	getStartPoint() {
 		let i, j;
-		for (i = 0; i < this.map_height; i++) {
-			for (j = 0; j < this.map_width; j++) {
-				if (this.map_info[i][j] == Map.tile_type.start)
+		for (i = 0; i < this.height; i++) {
+			for (j = 0; j < this.width; j++) {
+				if (this.info[i][j] == Map.tile_type.start)
 					return [i, j];
 			}
 		}
@@ -193,8 +193,8 @@ class Map {
 		Called by this.setHazard, this.setColorBlob.
 	*/
 	isValidPosition(row, column) {
-		if (row < 0 || row >= this.map_height) return false;
-		if (column < 0 || column >= this.map_width) return false;
+		if (row < 0 || row >= this.height) return false;
+		if (column < 0 || column >= this.width) return false;
 		return true;
 	}
 

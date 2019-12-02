@@ -40,6 +40,11 @@ class AddOnManager {
 		console.log(`Start Robot Simulation`);
 		this.status = true;
 
+		// send initial data to the user-interface
+		this.userInterface.updatePosition(this.simManager.getPosition());
+		this.userInterface.updateDirection(this.simManager.getDirection());
+		this.userInterface.updateMapInfo(this.map.getMapInfo());
+
 		// make initial path
 		this.path.calculatePath(this.map, this.simManager.getPosition(), this.simManager.getDirection());
 
@@ -97,7 +102,6 @@ class AddOnManager {
 			if (colorBlob & 0b0010) this.map.setColorBlob(currentPosition[0], currentPosition[1] - 1);
 			if (colorBlob & 0b0001) this.map.setColorBlob(currentPosition[0], currentPosition[1] + 1);
 
-		
 			// check if current position is on target
 			if (this.map.isTarget(currentPosition[0], currentPosition[1])) {
 				this.map.setTargetVisited(currentPosition[0], currentPosition[1]);
