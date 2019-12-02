@@ -84,8 +84,8 @@ class AddOnManager {
 
 			// end if the robot is out of the map
 			if (!this.map.isValidPosition(currentPosition[0], currentPosition[1])) {
-				alert(`목표를 달성할 수 없습니다!`);
-				console.log(`목표를 달성할 수 없습니다!`);
+				alert(`The positioning sensor detected that the robot is out of the map!`);
+				console.log(`The positioning sensor detected that the robot is out of the map!`);
 				break;
 			}
 
@@ -155,11 +155,11 @@ class AddOnManager {
 			} else {
 				// if there is no command, end
 				if (this.map.getTargets().length > 0) {
-					alert(`목표를 달성할 수 없습니다!`);
-					console.log(`목표를 달성할 수 없습니다!`);
+					alert(`Cannot make a path!`);
+					console.log(`Cannot make a path!`);
 				} else {
-					alert(`목표를 달성했습니다!`);
-					console.log(`목표를 달성했습니다!`);
+					alert(`Ended successfully`);
+					console.log(`Ended successfully!`);
 				}
 				break;
 			}
