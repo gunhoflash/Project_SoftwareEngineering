@@ -5,14 +5,14 @@ class Map {
 	*/
 
 	static tile_type = {
-		default   : 0,
-		hazard    : 1,
-		target    : 2,
-		colorblob : 3,
-		start     : 4,
-		hazard_hidden    : 6,
-		colorblob_hidden : 7,
-		target_visited   : 8
+		default           : 0,
+		hazard            : 1,
+		target            : 2,
+		color_blob        : 3,
+		start             : 4,
+		hazard_hidden     : 6,
+		color_blob_hidden : 7,
+		target_visited    : 8
 	};
 
 	#width;
@@ -20,10 +20,9 @@ class Map {
 	#info;
 
 	constructor() {
-		console.log(`Map here`);
-		this.width = 0;
+		this.width  = 0;
 		this.height = 0;
-		this.info = [];
+		this.info   = [];
 	}
 
 	/*
@@ -41,8 +40,6 @@ class Map {
 		this.info   = info;
 		this.width  = width;
 		this.height = height;
-
-		// return;
 
 		// create 5 hidden hazards and 3 hidden colorblobs
 		let num_hazard = 3, num_colorblob = 3, defaults = [];
@@ -65,7 +62,7 @@ class Map {
 		i = 0;
 		while (i < defaults.length) {
 			if (num_colorblob > 0) {
-				this.info[defaults[i][0]][defaults[i][1]] = Map.tile_type.colorblob_hidden;
+				this.info[defaults[i][0]][defaults[i][1]] = Map.tile_type.color_blob_hidden;
 				num_colorblob--;
 			}
 			else if (num_hazard > 0) {
@@ -91,8 +88,8 @@ class Map {
 	*/
 	isColorBlob(row, column) {
 		if (this.isValidPosition(row, column)) {
-			return (this.info[row][column] == Map.tile_type.colorblob
-				|| this.info[row][column] == Map.tile_type.colorblob_hidden);
+			return (this.info[row][column] == Map.tile_type.color_blob
+				|| this.info[row][column] == Map.tile_type.color_blob_hidden);
 		} else return false;
 	}
 
@@ -122,7 +119,7 @@ class Map {
 	setColorBlob(row, column) {
 		console.log(`setColorBlob(${row}, ${column})`);
 		if (this.isValidPosition(row, column)) {
-			this.info[row][column] = Map.tile_type.colorblob;
+			this.info[row][column] = Map.tile_type.color_blob;
 		}
 	}
 

@@ -18,7 +18,7 @@ class PositioningSensor extends Sensor {
 			setTimeout(() => {
 				resolve(0b0);
 				// resolve(Math.random() > 0.1 ? 0b0 : 0b1);
-			}, 500);
+			}, 300);
 		});
 	}
 }

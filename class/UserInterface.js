@@ -16,7 +16,7 @@ class UserInterface {
 	#map_info;
 
 	// ADD-ON
-	#addonManager;
+	#addon_manager;
 
 	// UI components
 	#svg_map;
@@ -45,7 +45,7 @@ class UserInterface {
 			Map.tile_type.start
 		];
 		
-		this.addonManager = new AddOnManager(this);
+		this.addon_manager = new AddOnManager(this);
 	}
 
 	/*
@@ -190,11 +190,10 @@ class UserInterface {
 		Start searching route and visualizing the simulation.
 	*/
 	startSearching() {
-		// TODO: edit it
-		this.status = 'start';
+		this.status                      = 'start';
 		this.button_start_stop.innerHTML = 'Stop';
-		this.button_start_stop.disabled = false;
-		this.button_mode.disabled = true;
+		this.button_start_stop.disabled  = false;
+		this.button_mode.disabled        = true;
 
 		// set map_info for ADD-ON
 		let i, j, map_info = [];
@@ -206,9 +205,8 @@ class UserInterface {
 		}
 
 		// Send start signal to ADD-ON with map data
-		this.addonManager.init(map_info, this.map_width, this.map_height);
-
-		this.addonManager.startRobotSimulation();
+		this.addon_manager.init(map_info, this.map_width, this.map_height);
+		this.addon_manager.startRobotSimulation();
 	}
 	
 	/*
@@ -216,16 +214,13 @@ class UserInterface {
 		Stop searching route and visualizing the simulation.
 	*/
 	stopSearching() {
-		// TODO: edit it
-		this.status = 'stop';
+		this.status                      = 'stop';
 		this.button_start_stop.innerHTML = 'Start';
-		this.button_start_stop.disabled = false;
-		this.button_mode.disabled = false;
-		// TODO: send stop signal to ADD-ON
-		this.addonManager.stopRobotSimulation();
+		this.button_start_stop.disabled  = false;
+		this.button_mode.disabled        = false;
+		this.addon_manager.stopRobotSimulation();
 	}
 
-	
 	/*
 		Called by click trigger.
 		Change pointing mode; i.e. default/harzard/target/start
@@ -266,19 +261,18 @@ class UserInterface {
 		}
 	}
 
+	// show updated robot's position
 	updatePosition(position) {
-		// TODO: show robot icon
-		console.log(`updatePosition(${position})`);
 		this.svg_robot.setAttribute('x', position[1] * 30);
 		this.svg_robot.setAttribute('y', position[0] * 30);
 	}
-	
+
+	// show updated robot's direction
 	updateDirection(direction) {
-		// TODO: show robot icon
-		console.log(`updateDirection(${direction})`);
 		this.svg_robot_body.style.transform = `rotate(${direction * 90}deg)`;
 	}
 
+	// show updated map information
 	updateMapInfo(map_info) {
 		let i, j;
 		for (i = 0; i < this.map_height; i++) {

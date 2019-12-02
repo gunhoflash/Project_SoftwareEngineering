@@ -24,7 +24,7 @@ class HazardSensor extends Sensor {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
 				resolve(this.map.isHazard(position[0], position[1]) ? 0b1 : 0b0);
-			}, 500);
+			}, 300);
 		});
 	}
 }

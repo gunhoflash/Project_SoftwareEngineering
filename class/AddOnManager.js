@@ -6,16 +6,16 @@ class AddOnManager {
 
 	#map;
 	#path;
-	#userInterface;
-	#simManager;
+	#user_interface;
+	#sim_manager;
 	#status;
 
-	constructor(userInterface) {
-		this.map           = new Map();
-		this.path          = new Path();
-		this.userInterface = userInterface;
-		this.simManager    = new SIMManager(this.map);
-		this.status        = false;
+	constructor(user_interface) {
+		this.map            = new Map();
+		this.path           = new Path();
+		this.user_interface = user_interface;
+		this.sim_manager    = new SIMManager(this.map);
+		this.status         = false;
 	}
 
 	/*
@@ -32,8 +32,15 @@ class AddOnManager {
 
 		// initialize map
 		this.map.init(map_info, map_width, map_height);
-		this.simManager.setPosition(this.map.getStartPoint());
-		this.simManager.setDirection(SIMManager.direction_type.north);
+		this.sim_manager.setPosition(this.map.getStartPoint());
+		this.sim_manager.setDirection(SIMManager.direction_type.north);
+	}
+
+	updateUI() {
+		if (!this.user_interface || !this.sim_manager) return;
+		this.user_interface.updatePosition(this.sim_manager.getPosition());
+		this.user_interface.updateDirection(this.sim_manager.getDirection());
+		this.user_interface.updateMapInfo(this.map.getMapInfo());
 	}
 
 	async startRobotSimulation() {
@@ -41,54 +48,65 @@ class AddOnManager {
 		this.status = true;
 
 		// send initial data to the user-interface
-		this.userInterface.updatePosition(this.simManager.getPosition());
-		this.userInterface.updateDirection(this.simManager.getDirection());
-		this.userInterface.updateMapInfo(this.map.getMapInfo());
+		this.updateUI();
 
 		// make initial path
-		this.path.calculatePath(this.map, this.simManager.getPosition(), this.simManager.getDirection());
+		this.path.calculatePath(this.map, this.sim_manager.getPosition(), this.sim_manager.getDirection());
 
 		while (this.status) {
-			let currentPosition  = this.simManager.getPosition();
-			let nextPosition     = this.simManager.getPosition(true);
-			let currentDirection = this.simManager.getDirection();
-			let needNewPath      = false;
+			let currentPosition, nextPosition, currentDirection,
+				positioning, hazard, colorBlob,
+				positioningPromise, hazardPromise, colorBlobPromise,
+				needNewPath;
 
-			this.userInterface.updatePosition(currentPosition);
-			this.userInterface.updateDirection(currentDirection);
-			this.userInterface.updateMapInfo(this.map.getMapInfo());
+			needNewPath = false;
 
-			// requests to read sensor and wait
-			let hazard, colorBlob, positioning;
-			let hazardPromise      = this.simManager.readSensor('hazard', nextPosition);       // 1 bit
-			let colorBlobPromise   = this.simManager.readSensor('colorBlob', currentPosition); // 4 bit
-			let positioningPromise = this.simManager.readSensor('positioning');                // 1 bit
+			/*
 
-			// wait
-			hazardPromise.then(data => { hazard = data; });
-			colorBlobPromise.then(data => { colorBlob = data; });
+				Read Positioning Sensor
+
+			*/
+
+			// requests to read positioning sensor and wait
+			positioningPromise = this.sim_manager.readSensor('positioning');
 			positioningPromise.then(data => { positioning = data; });
-			await hazardPromise;
-			await colorBlobPromise;
 			await positioningPromise;
 
-			// handle exception: stop simulation while reading sensors
-			if (!this.status) break;
-
-			// read all sensors
-			console.log(`read all sensors ${hazard}, ${colorBlob}, ${positioning}`);
-
 			// adjust position
-			// TODO: handle excecption: robot run out from the map
 			if (positioning) {
-				this.simManager.setPosition();
-				currentPosition = this.simManager.getPosition();
+				this.sim_manager.setPosition();
 				needNewPath = true;
 			}
+			currentPosition = this.sim_manager.getPosition();
 
-			// TODO: read hazard/colorBlob sensors
-			// TODO: update map 
-			// TODO: calculate a new path
+			// update ui
+			this.updateUI();
+
+			// end if the robot is out of the map
+			if (!this.map.isValidPosition(currentPosition[0], currentPosition[1])) {
+				alert(`목표를 달성할 수 없습니다!`);
+				console.log(`목표를 달성할 수 없습니다!`);
+				break;
+			}
+
+			// get current position and direction
+			nextPosition     = this.sim_manager.getPosition(true);
+			currentPosition  = this.sim_manager.getPosition();
+			currentDirection = this.sim_manager.getDirection();
+
+			/*
+
+				Read Hazard/ColorBlob Sensor
+
+			*/
+
+			// requests to read positioning sensor and wait
+			hazardPromise    = this.sim_manager.readSensor('hazard', nextPosition);
+			colorBlobPromise = this.sim_manager.readSensor('colorBlob', currentPosition);
+			hazardPromise.then(data => { hazard = data; });
+			colorBlobPromise.then(data => { colorBlob = data; });
+			await hazardPromise;
+			await colorBlobPromise;
 
 			// hazard found
 			if (hazard) {
@@ -102,38 +120,51 @@ class AddOnManager {
 			if (colorBlob & 0b0010) this.map.setColorBlob(currentPosition[0], currentPosition[1] - 1);
 			if (colorBlob & 0b0001) this.map.setColorBlob(currentPosition[0], currentPosition[1] + 1);
 
+			// update ui
+			this.updateUI();
+
+			/*
+
+				Calculate Path
+
+			*/
+
 			// check if current position is on target
 			if (this.map.isTarget(currentPosition[0], currentPosition[1])) {
 				this.map.setTargetVisited(currentPosition[0], currentPosition[1]);
 				needNewPath = true;
+				this.updateUI();
 			}
 
 			// calculate a new path
 			if (needNewPath)
 				this.path.calculatePath(this.map, currentPosition, currentDirection);
-			
+
+			/*
+
+				Order Robot or END
+
+			*/
+
 			// draw next command
 			let nextCommand = this.path.getNextCommand();
 			if (nextCommand != null) {
 				// order SIM manager to move or rotate
 				console.log(`Do the next command:${nextCommand}`);
-				await this.simManager.driveMotor(nextCommand);
+				await this.sim_manager.driveMotor(nextCommand);
 			} else {
 				// if there is no command, end
 				if (this.map.getTargets().length > 0) {
 					alert(`목표를 달성할 수 없습니다!`);
 					console.log(`목표를 달성할 수 없습니다!`);
-					break;
 				} else {
 					alert(`목표를 달성했습니다!`);
 					console.log(`목표를 달성했습니다!`);
-					break;
 				}
+				break;
 			}
 			
-			this.userInterface.updatePosition(currentPosition);
-			this.userInterface.updateDirection(currentDirection);
-			this.userInterface.updateMapInfo(this.map.getMapInfo());
+			this.updateUI();
 		}
 
 		console.log(`End Robot Simulation`);

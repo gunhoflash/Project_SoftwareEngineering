@@ -4,7 +4,6 @@ class SIMManager {
 		Properties
 	*/
 
-	// TODO: change direction to array(or vector)
 	static direction_type = {
 		north : 0,
 		east  : 1,
@@ -17,19 +16,18 @@ class SIMManager {
 		rotate : 1
 	};
 
-	#robotMovement;
-	#hazardSensor;
-	#colorBlobSensor;
-	#positioningSensor;
-	
-	#currentPosition;
-	#currentDirection;
+	#robot_movement;
+	#hazard_sensor;
+	#color_blob_sensor;
+	#positioning_sensor;
+	#current_position;
+	#current_direction;
 
 	constructor(map) {
-		this.robotMovement     = new RobotMovement();
-		this.hazardSensor      = new HazardSensor(map);
-		this.colorBlobSensor   = new ColorBlobSensor(map);
-		this.positioningSensor = new PositioningSensor();
+		this.robot_movement     = new RobotMovement();
+		this.hazard_sensor      = new HazardSensor(map);
+		this.color_blob_sensor  = new ColorBlobSensor(map);
+		this.positioning_sensor = new PositioningSensor();
 
 		this.setPosition([0, 0]);
 		this.setDirection(SIMManager.direction_type.north);
@@ -50,9 +48,9 @@ class SIMManager {
 	*/
 	driveMotor(type) {
 		if (type == SIMManager.drive_type.move) {
-			return this.robotMovement.move().then(this.setPosition.bind(this));
+			return this.robot_movement.move().then(this.setPosition.bind(this));
 		} else if (type == SIMManager.drive_type.rotate) {
-			return this.robotMovement.rotate().then(() => {
+			return this.robot_movement.rotate().then(() => {
 				// Rotate only 90 degree clockwise.
 				switch (this.getDirection()) {
 					case SIMManager.direction_type.north:
@@ -67,7 +65,7 @@ class SIMManager {
 					case SIMManager.direction_type.west:
 						this.setDirection(SIMManager.direction_type.north);
 						break;
-					default: throw Error(`Unexpected direction: ${this.currentDirection}`);
+					default: throw Error(`Unexpected direction: ${this.current_direction}`);
 				}
 			});
 		} else {
@@ -86,9 +84,9 @@ class SIMManager {
 	*/
 	readSensor(type, position) {
 		switch (type) {
-			case 'hazard'      : return this.hazardSensor.getSensorValue(position);
-			case 'colorBlob'   : return this.colorBlobSensor.getSensorValue(position);
-			case 'positioning' : return this.positioningSensor.getSensorValue();
+			case 'hazard'      : return this.hazard_sensor.getSensorValue(position);
+			case 'colorBlob'   : return this.color_blob_sensor.getSensorValue(position);
+			case 'positioning' : return this.positioning_sensor.getSensorValue();
 			default            : throw Error(`Unexpected type: ${type}`);
 		}
 	}
@@ -103,7 +101,7 @@ class SIMManager {
 			(none)
 	*/
 	getDirection() {
-		return this.currentDirection;
+		return this.current_direction;
 	}
 
 	/*
@@ -117,16 +115,16 @@ class SIMManager {
 	*/
 	getPosition(next = false) {
 		if (next) {
-			let nextPosition = this.currentPosition.slice();
+			let nextPosition = this.current_position.slice();
 			switch (this.getDirection()) {
 				case SIMManager.direction_type.north : nextPosition[0]--; break;
 				case SIMManager.direction_type.east  : nextPosition[1]++; break;
 				case SIMManager.direction_type.south : nextPosition[0]++; break;
 				case SIMManager.direction_type.west  : nextPosition[1]--; break;
-				default : throw Error(`Unexpected direction: ${this.currentDirection}`);
+				default : throw Error(`Unexpected direction: ${this.current_direction}`);
 			}
 			return nextPosition;
-		} else return this.currentPosition;
+		} else return this.current_position;
 	}
 
 	/*
@@ -139,7 +137,7 @@ class SIMManager {
 			(none)
 	*/
 	setDirection(direction) {
-		this.currentDirection = direction;
+		this.current_direction = direction;
 	}
 
 	/*
@@ -155,11 +153,11 @@ class SIMManager {
 	setPosition(position = null) {
 		if (position) {
 			// set current position
-			this.currentPosition = position;
+			this.current_position = position;
 		} else {
 			// move forward
 			let nextPosition = this.getPosition(true);
-			this.currentPosition = nextPosition;
+			this.current_position = nextPosition;
 		}
 	}
 }

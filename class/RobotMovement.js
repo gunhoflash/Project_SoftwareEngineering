@@ -21,7 +21,7 @@ class RobotMovement {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
 				resolve();
-			}, 500);
+			}, 400);
 		});
 	}
 
@@ -38,7 +38,7 @@ class RobotMovement {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
 				resolve();
-			}, 500);
+			}, 400);
 		});
 	}
 }

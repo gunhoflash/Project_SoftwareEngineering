@@ -3,6 +3,7 @@ class Path {
 	/*
 		Properties
 	*/
+
 	#remained_path;
 
 	constructor() {

@@ -31,7 +31,7 @@ class ColorBlobSensor extends Sensor {
 				d |= this.map.isColorBlob(row, column - 1) ? 0b0010 : 0b0000; // left
 				d |= this.map.isColorBlob(row, column + 1) ? 0b0001 : 0b0000; // right
 				resolve(d);
-			}, 500);
+			}, 300);
 		});
 	}
 }
