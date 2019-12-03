@@ -47,6 +47,7 @@
 			fill:#fafafa;
 			transform: rotate(0deg);
 			transform-origin: 15px 15px;
+			transition: transform ease 0.3s;
 		}
 
 	</style>
@@ -91,7 +92,7 @@
 							<feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
 						</filter>
 					</defs>
-					<polygon id="svg_robot_body" points="15,5 25,25 15,20 5,25" filter="url(#f3)" />
+					<polygon id="svg_robot_body" points="15,5 25,25 15,20 5,25" filter="url(#f3)" data-direction="0" />
 				</svg>
 			</svg>
 		</div>

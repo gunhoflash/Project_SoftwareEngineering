@@ -269,7 +269,11 @@ class UserInterface {
 
 	// show updated robot's direction
 	updateDirection(direction) {
-		this.svg_robot_body.style.transform = `rotate(${direction * 90}deg)`;
+		let current_direction = parseInt(this.svg_robot_body.getAttribute('data-direction'));
+		let rotation = parseInt((current_direction + 90) / 360) * 360;
+
+		this.svg_robot_body.setAttribute('data-direction', direction);
+		this.svg_robot_body.style.transform = `rotate(${direction * 90 + rotation}deg)`;
 	}
 
 	// show updated map information
