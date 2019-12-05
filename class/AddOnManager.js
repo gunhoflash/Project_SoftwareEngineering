@@ -62,12 +62,13 @@ class AddOnManager {
 		// make initial path
 		this.path.calculatePath(this.map, this.sim_manager.getPosition(), this.sim_manager.getDirection());
 
-		while (this.status) {
-			let currentPosition, nextPosition, currentDirection,
-				positioning, hazard, colorBlob,
-				positioningPromise, hazardPromise, colorBlobPromise,
-				needNewPath;
+		let currentPosition, nextPosition, currentDirection,
+			positioning, hazard, colorBlob,
+			positioningPromise, hazardPromise, colorBlobPromise,
+			needNewPath, needReadPositioningSensor;
 
+		needReadPositioningSensor = false;
+		while (this.status) {
 			needNewPath = false;
 
 			/*
@@ -76,16 +77,19 @@ class AddOnManager {
 
 			*/
 
-			// requests to read positioning sensor and wait
-			positioningPromise = this.sim_manager.readSensor('positioning');
-			positioningPromise.then(data => { positioning = data; });
-			await positioningPromise;
+			if (needReadPositioningSensor) {
+				// requests to read positioning sensor and wait
+				positioningPromise = this.sim_manager.readSensor('positioning');
+				positioningPromise.then(data => { positioning = data; });
+				await positioningPromise;
 
-			// adjust position
-			if (positioning) {
-				this.sim_manager.setPosition();
-				needNewPath = true;
+				// adjust position
+				if (positioning) {
+					this.sim_manager.setPosition();
+					needNewPath = true;
+				}
 			}
+
 			currentPosition = this.sim_manager.getPosition();
 
 			// update ui
@@ -160,6 +164,7 @@ class AddOnManager {
 			if (nextCommand != null) {
 				// order robot to move or rotate
 				await this.sim_manager.driveMotor(nextCommand);
+				needReadPositioningSensor = (nextCommand == SIMManager.drive_type.move);
 			} else {
 				// if there is no command left, end this simulation
 				if (this.map.getTargets().length > 0) {

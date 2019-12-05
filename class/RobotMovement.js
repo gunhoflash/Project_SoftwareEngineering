@@ -13,7 +13,7 @@ class RobotMovement {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
 				resolve();
-			}, 400);
+			}, 600);
 		});
 	}
 
