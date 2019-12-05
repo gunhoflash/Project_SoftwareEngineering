@@ -71,7 +71,7 @@ class UserInterface {
 			switch (component.type) {
 				case "svg_map":
 					this.svg_map = component.target;
-					this.svg_map.addEventListener('mousedown', this.setPoint.bind(this));
+					this.svg_map.addEventListener('mousedown', this.#setPoint.bind(this));
 					break;
 				case "svg_robot":
 					this.svg_robot = component.target;
@@ -87,15 +87,15 @@ class UserInterface {
 					break;
 				case "button_init":
 					this.button_init = component.target;
-					this.button_init.addEventListener('click', this.initMap.bind(this));
+					this.button_init.addEventListener('click', this.#initMap.bind(this));
 					break;
 				case "button_mode":
 					this.button_mode = component.target;
-					this.button_mode.addEventListener('click', this.changePointingMode.bind(this));
+					this.button_mode.addEventListener('click', this.#changePointingMode.bind(this));
 					break;
 				case "button_start_stop":
 					this.button_start_stop = component.target;
-					this.button_start_stop.addEventListener('click', this.controlRobotSimulation.bind(this));
+					this.button_start_stop.addEventListener('click', this.#controlRobotSimulation.bind(this));
 					break;
 				default:
 					break;
@@ -106,14 +106,14 @@ class UserInterface {
 	/*
 		Update tile's type.
 	*/
-	updateTile(row, column, type) {
+	#updateTile = (row, column, type) => {
 		this.svg_rects[row][column].dataset.type = type;
 	}
 
 	/*
 		Change type of the tile which is selected by the user.
 	*/
-	setPoint(event) {
+	#setPoint = (event) => {
 		// handle exception: no rect
 		if (!this.svg_rects) return;
 
@@ -145,8 +145,8 @@ class UserInterface {
 		Get the map size from <input> components.
 		Request map initialization to ADD-ON.
 	*/
-	initMap() {
-		this.stopRobotSimulation();
+	#initMap = () => {
+		this.#stopRobotSimulation();
 
 		// set size
 		this.map_width = parseInt(this.input_width.value);
@@ -157,22 +157,22 @@ class UserInterface {
 		this.svg_map.style.height = this.map_height * 30;
 		
 		// initialize all tiles
-		this.initTiles();
+		this.#initTiles();
 	}
 
 	/*
 		Start or stop searching.
 	*/
-	controlRobotSimulation() {
-		if (this.status == 'start') this.stopRobotSimulation();
-		else if (this.status == 'stop') this.startRobotSimulation();
+	#controlRobotSimulation = () => {
+		if (this.status == 'start') this.#stopRobotSimulation();
+		else if (this.status == 'stop') this.#startRobotSimulation();
 	}
 
 	/*
 		Request begining robot simulation to ADD-ON.
 		Send map information to ADD-ON to initialize.
 	*/
-	startRobotSimulation() {
+	#startRobotSimulation = () => {
 		this.status                      = 'start';
 		this.button_start_stop.innerHTML = 'Stop';
 		this.button_start_stop.disabled  = false;
@@ -199,7 +199,7 @@ class UserInterface {
 	/*
 		Request suspend robot simulation to ADD-ON.
 	*/
-	stopRobotSimulation() {
+	#stopRobotSimulation = () => {
 		this.status                      = 'stop';
 		this.button_start_stop.innerHTML = 'Start';
 		this.button_start_stop.disabled  = false;
@@ -210,7 +210,7 @@ class UserInterface {
 	/*
 		Change pointing mode: default/harzard/target/start.
 	*/
-	changePointingMode() {
+	#changePointingMode = () => {
 		this.pointing_mode.push(this.pointing_mode.shift());
 		this.button_mode.innerHTML = Object.keys(Map.tile_type).find(key => Map.tile_type[key] == this.pointing_mode[0]);
 	}
@@ -218,7 +218,7 @@ class UserInterface {
 	/*
 		Initialize all tiles.
 	*/
-	initTiles() {
+	#initTiles = () => {
 		let i, j, tile;
 
 		// remove all tiles
@@ -279,7 +279,7 @@ class UserInterface {
 		let i, j;
 		for (i = 0; i < this.map_height; i++) {
 			for (j = 0; j < this.map_width; j++) {
-				this.updateTile(i, j, map_info[i][j]);
+				this.#updateTile(i, j, map_info[i][j]);
 			}
 		}
 	}

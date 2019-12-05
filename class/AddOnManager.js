@@ -42,7 +42,7 @@ class AddOnManager {
 		Send the position and direction of the robot
 		and map information to the user interface to display.
 	*/
-	updateUI() {
+	#updateUI = () => {
 		if (!this.user_interface || !this.sim_manager) return;
 		this.user_interface.updatePosition(this.sim_manager.getPosition());
 		this.user_interface.updateDirection(this.sim_manager.getDirection());
@@ -57,7 +57,7 @@ class AddOnManager {
 		this.status = true;
 
 		// send initial data to the user interface
-		this.updateUI();
+		this.#updateUI();
 
 		// make initial path
 		this.path.calculatePath(this.map, this.sim_manager.getPosition(), this.sim_manager.getDirection());
@@ -93,7 +93,7 @@ class AddOnManager {
 			currentPosition = this.sim_manager.getPosition();
 
 			// update ui
-			this.updateUI();
+			this.#updateUI();
 
 			// end if the robot is out of the map
 			if (!this.map.isValidPosition(currentPosition)) {
@@ -134,7 +134,7 @@ class AddOnManager {
 			if (colorBlob & 0b0001) this.map.setColorBlob(currentPosition[0], currentPosition[1] + 1);
 
 			// update ui
-			this.updateUI();
+			this.#updateUI();
 
 			/*
 
@@ -146,7 +146,7 @@ class AddOnManager {
 			if (this.map.isTarget(currentPosition[0], currentPosition[1])) {
 				this.map.setTargetVisited(currentPosition[0], currentPosition[1]);
 				needNewPath = true;
-				this.updateUI();
+				this.#updateUI();
 			}
 
 			// calculate a new path
@@ -176,7 +176,7 @@ class AddOnManager {
 			}
 
 			// update ui
-			this.updateUI();
+			this.#updateUI();
 		}
 
 		this.stopRobotSimulation();
