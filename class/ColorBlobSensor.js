@@ -1,5 +1,11 @@
 class ColorBlobSensor extends Sensor {
 
+	/*
+
+		Properties
+
+	*/
+
 	#map;
 
 	constructor(map) {
@@ -8,17 +14,16 @@ class ColorBlobSensor extends Sensor {
 	}
 
 	/*
+
 		Methods
+
 	*/
 
 	/*
-		Called by SIMManager.
-
-		parameter:
-			(none)
-
-		return:
-			4 bit: each bit indicates the existence of a colorblob.
+		Return 4 bits data.
+		Each bit indicates the existence of a colorblob.
+			0: not exist
+			1: exist
 	*/
 	getSensorValue(position) {
 		return new Promise((resolve, reject) => {

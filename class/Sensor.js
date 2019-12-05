@@ -7,12 +7,13 @@ class Sensor {
 	}
 
 	/*
+
 		Methods
+
 	*/
 
 	/*
-		Called by SIMManager.
-		For singleton pattern.
+		Return n bits sensor data
 	*/
 	getSensorValue(position = null) {}
 }

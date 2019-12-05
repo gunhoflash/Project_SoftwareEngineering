@@ -1,7 +1,9 @@
 class Path {
 
 	/*
+
 		Properties
+
 	*/
 
 	#remained_path;
@@ -11,32 +13,42 @@ class Path {
 	}
 
 	/*
-		Called by AddOnManager.
+
+		Methods
+
 	*/
-	
-	// return index of the tile from tiles or -1 when not found
-	index(tiles, _tile) {
+
+	/*
+		Return index of the tile from the array.
+		If the tile is not in the array, return -1.
+	*/
+	#index = (tile, array) => {
 		let i, temp_tile;
-		for (i = 0; i < tiles.length; i++) {
-			temp_tile = tiles[i].flat();
-			if (temp_tile[0] == _tile[0] && temp_tile[1] == _tile[1])
+		for (i = 0; i < array.length; i++) {
+			temp_tile = array[i].flat();
+			if (temp_tile[0] == tile[0] && temp_tile[1] == tile[1])
 				return i;
 		}
 		return -1;
 	}
 
-	// insert tile into the open_list if the tile is not in the colsed_list
-	insertIntoOpenList(row, column, prev, open_list, closed_list, map) {
+	/*
+		Insert a tile into the open_list if the tile is not in the colsed_list.
+	*/
+	#insertIntoOpenList = (row, column, prev, open_list, closed_list, map) => {
 		// handle exception: the tile is out of the map
-		if (!map.isValidPosition(row, column)) return;
+		if (!map.isValidPosition([row, column])) return;
 
 		// handle exception: the tile is already in the open_list or closed_list
-		if (this.index([].concat(open_list, closed_list), [row, column]) < 0)
-			open_list.push([[row, column], prev]);
+		if (this.#index([row, column], [].concat(open_list, closed_list)) >= 0) return;
+
+		open_list.push([[row, column], prev]);
 	}
 	
-	// calculate remained path
-	calculatePath(map, currentPosition, current_dir) {
+	/*
+		Calculate a path through all target points from current position.
+	*/
+	calculatePath(map, current_position, current_dir) {
 		let total_path = [];
 		let remained_target_point = map.getTargets();
 
@@ -44,53 +56,59 @@ class Path {
 
 		// TODO: sort remained_target_point
 
-		// find all waypoints and insert into total_path
+		/*
+			Select a target point to visit.
+			Calculate a path from current position to the target point.
+			Find all waypoints and insert these into total_path.
+		*/
 		while (remained_target_point.length > 0) {
-			let open_list   = []; // point robot want to visit
-			let closed_list = map.getHazards(); // already visited point
-			let path        = [];
 			let next_target = remained_target_point.shift();
+			let open_list   = [];               // points that need to be checked
+			let closed_list = map.getHazards(); // points that don't need to be checked
 			let tile;
 
-			open_list.push([currentPosition, null]); // [current point, prev point]
+			open_list.push([current_position, null]); // [current point, prev point]
 
+			// Explore the adjoining points until finding the target point.
 			while (true) {
 
-				// select next tile
+				// select next tile to check
 				tile = open_list.shift();
 
-				// no more tile to visit. failed to find a path
+				// if there is no tile to check, we failed.
 				if (!tile) return;
 
 				closed_list.push(tile);
 
-				// find the target point
+				// if the target point found, stop to searching
 				if (tile[0][0] == next_target[0] && tile[0][1] == next_target[1]) break;
 
-				// check surrounding tiles
-				this.insertIntoOpenList(tile[0][0] + 1, tile[0][1], tile, open_list, closed_list, map);
-				this.insertIntoOpenList(tile[0][0] - 1, tile[0][1], tile, open_list, closed_list, map);
-				this.insertIntoOpenList(tile[0][0], tile[0][1] + 1, tile, open_list, closed_list, map);
-				this.insertIntoOpenList(tile[0][0], tile[0][1] - 1, tile, open_list, closed_list, map);
+				// check adjoining tiles
+				this.#insertIntoOpenList(tile[0][0] + 1, tile[0][1], tile, open_list, closed_list, map);
+				this.#insertIntoOpenList(tile[0][0] - 1, tile[0][1], tile, open_list, closed_list, map);
+				this.#insertIntoOpenList(tile[0][0], tile[0][1] + 1, tile, open_list, closed_list, map);
+				this.#insertIntoOpenList(tile[0][0], tile[0][1] - 1, tile, open_list, closed_list, map);
 			}
 
-			// make a path
+			// make the path
+			let path = [];
 			while (tile != null) {
 				path.push(tile[0]);
 				tile = tile[1];
 			}
 			total_path = total_path.concat(path.reverse());
 
-			currentPosition = next_target;
+			// set current position to prepare next path-finding
+			current_position = next_target;
 		}
 
-		// convert the total path to a sequence of commands to use the robot movement interface 
+		// convert the total path to a sequence of commands to use the robot movement interface
 		let i, path_x, path_y, real_dir, count;
 		for (i = 0; i < total_path.length - 1; i++) {
 			path_y = total_path[i + 1][0] - total_path[i][0];
 			path_x = total_path[i + 1][1] - total_path[i][1];
 
-			// handle exception: same point
+			// handle exception: same waypoint
 			if (path_x == 0 && path_y == 0) {
 				console.log(`ignore same point`);
 				continue;
@@ -110,12 +128,10 @@ class Path {
 			// update current direction
 			current_dir = real_dir;
 		}
-
-		console.log(`path calculated: ${this.remained_path}`);
 	}
 
 	/*
-		Called by AddOnManager.
+		Return the remained path or null.
 	*/
 	getNextCommand() {
 		if (this.remained_path.length > 0)
@@ -123,5 +139,4 @@ class Path {
 		else
 			return null;
 	}
-
 }

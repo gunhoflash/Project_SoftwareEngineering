@@ -1,7 +1,9 @@
 class SIMManager {
 
 	/*
+
 		Properties
+
 	*/
 
 	static direction_type = {
@@ -34,24 +36,21 @@ class SIMManager {
 	}
 
 	/*
+
 		Methods
+
 	*/
 
 	/*
-		Called by SIMManager.
-
-		parameter:
-			type: string that indicates a method to call
-
-		return:
-			Promise
+		Return a Promise object that fulfills
+		the command(move or rotate).
 	*/
 	driveMotor(type) {
 		if (type == SIMManager.drive_type.move) {
 			return this.robot_movement.move().then(this.setPosition.bind(this));
 		} else if (type == SIMManager.drive_type.rotate) {
 			return this.robot_movement.rotate().then(() => {
-				// Rotate only 90 degree clockwise.
+				// rotate only 90 degree clockwise.
 				switch (this.getDirection()) {
 					case SIMManager.direction_type.north:
 						this.setDirection(SIMManager.direction_type.east);
@@ -74,13 +73,8 @@ class SIMManager {
 	}
 
 	/*
-		Called by SIMManager.
-
-		parameter:
-			type: string that indicates a sensor to read
-
-		return:
-			Promise
+		Return a Promise object that fulfills
+		reading the robot's sensor data from given position.
 	*/
 	readSensor(type, position) {
 		switch (type) {
@@ -92,26 +86,15 @@ class SIMManager {
 	}
 
 	/*
-		Called by SIMManager.
-
-		parameter:
-			(none)
-
-		return:
-			(none)
+		Return the current direction.
 	*/
 	getDirection() {
 		return this.current_direction;
 	}
 
 	/*
-		Called by SIMManager.
-
-		parameter:
-			(none)
-
-		return:
-			(none)
+		Return the current position.
+		If the parameter 'next' is true, return the forward position.
 	*/
 	getPosition(next = false) {
 		if (next) {
@@ -128,27 +111,15 @@ class SIMManager {
 	}
 
 	/*
-		Called by ADD-ON.
-
-		parameter:
-			(none)
-
-		return:
-			(none)
+		Set current direction.
 	*/
 	setDirection(direction) {
 		this.current_direction = direction;
 	}
 
 	/*
-		Called by ADD-ON.
-		Move 1 tile forward.
-
-		parameter:
-			position: If null, move 1 tile forward. If not, set current position
-
-		return:
-			(none)
+		Set the current position to
+		forward position or specific position.
 	*/
 	setPosition(position = null) {
 		if (position) {

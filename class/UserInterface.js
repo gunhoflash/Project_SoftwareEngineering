@@ -1,8 +1,9 @@
-// TODO: handle exceptions
 class UserInterface {
 
 	/*
+
 		Properties
+
 	*/
 
 	// static property
@@ -30,13 +31,10 @@ class UserInterface {
 	#button_start_stop;
 
 	/*
-		Called by this.getUserInterface().
 		Set all UI components to UserInterface's properties.
 		Contructor should be private for singleton pattern.
 	*/
 	constructor() {
-		// TODO: edit something
-		// TODO: init variables
 		this.status = 'init';
 		this.pointing_mode = [
 			Map.tile_type.default,
@@ -49,12 +47,14 @@ class UserInterface {
 	}
 
 	/*
+
 		Methods
+
 	*/
 
 	/*
-		called by default.
-		For singleton pattern.
+		Return the UserInterface object.
+		Implemented for singleton pattern.
 	*/
 	static getUserInterface() {
 		if (!UserInterface.ui)
@@ -63,8 +63,8 @@ class UserInterface {
 	}
 
 	/*
-		Called by default().
-		Set all UI components to UserInterface's properties.
+		Register all UI components to UserInterface's properties.
+		Add event listener for tiles and buttons.
 	*/
 	registerUIComponents(array) {
 		for (let component of array) {
@@ -95,7 +95,7 @@ class UserInterface {
 					break;
 				case "button_start_stop":
 					this.button_start_stop = component.target;
-					this.button_start_stop.addEventListener('click', this.startStopSearching.bind(this));
+					this.button_start_stop.addEventListener('click', this.controlRobotSimulation.bind(this));
 					break;
 				default:
 					break;
@@ -104,20 +104,14 @@ class UserInterface {
 	}
 
 	/*
-		Called by ADD-ON.
-		Update tile info from ADD-OD data
+		Update tile's type.
 	*/
 	updateTile(row, column, type) {
 		this.svg_rects[row][column].dataset.type = type;
 	}
 
-	updateSIMPosition(row, column) {
-		console.log(`SIM: ${row}, ${column}`);
-	}
-
 	/*
-		Called by click trigger.
-		Set the default/harzard/target/start points.
+		Change type of the tile which is selected by the user.
 	*/
 	setPoint(event) {
 		// handle exception: no rect
@@ -148,13 +142,11 @@ class UserInterface {
 	}
 
 	/*
-		Called by click trigger.
-		Stop searching.
-		Remove all points.
 		Get the map size from <input> components.
+		Request map initialization to ADD-ON.
 	*/
 	initMap() {
-		this.stopSearching();
+		this.stopRobotSimulation();
 
 		// set size
 		this.map_width = parseInt(this.input_width.value);
@@ -169,27 +161,18 @@ class UserInterface {
 	}
 
 	/*
-		Called by click trigger.
 		Start or stop searching.
 	*/
-	startStopSearching() {
-		// TODO: edit it
-		if (this.status == 'start') {
-			// when 'start' status, stop searching
-			this.stopSearching();
-		} else if (this.status == 'stop') {
-			// when 'stop' status, start searching
-			this.startSearching();
-		} else {
-			// when 'init' status, do nothing
-		}
+	controlRobotSimulation() {
+		if (this.status == 'start') this.stopRobotSimulation();
+		else if (this.status == 'stop') this.startRobotSimulation();
 	}
 
 	/*
-		Called by this.startStopSearching()
-		Start searching route and visualizing the simulation.
+		Request begining robot simulation to ADD-ON.
+		Send map information to ADD-ON to initialize.
 	*/
-	startSearching() {
+	startRobotSimulation() {
 		this.status                      = 'start';
 		this.button_start_stop.innerHTML = 'Stop';
 		this.button_start_stop.disabled  = false;
@@ -207,13 +190,16 @@ class UserInterface {
 		// Send start signal to ADD-ON with map data
 		this.addon_manager.init(map_info, this.map_width, this.map_height);
 		this.addon_manager.startRobotSimulation();
+
+		// reset robot's rotation to 0
+		this.svg_robot_body.setAttribute('data-rotation', '0');
+		this.svg_robot_body.style.transform = `rotate(0deg)`;
 	}
-	
+
 	/*
-		Called by click trigger or this.initMap().
-		Stop searching route and visualizing the simulation.
+		Request suspend robot simulation to ADD-ON.
 	*/
-	stopSearching() {
+	stopRobotSimulation() {
 		this.status                      = 'stop';
 		this.button_start_stop.innerHTML = 'Start';
 		this.button_start_stop.disabled  = false;
@@ -222,8 +208,7 @@ class UserInterface {
 	}
 
 	/*
-		Called by click trigger.
-		Change pointing mode; i.e. default/harzard/target/start
+		Change pointing mode: default/harzard/target/start.
 	*/
 	changePointingMode() {
 		this.pointing_mode.push(this.pointing_mode.shift());
@@ -231,7 +216,7 @@ class UserInterface {
 	}
 
 	/*
-		Initialize all tiles
+		Initialize all tiles.
 	*/
 	initTiles() {
 		let i, j, tile;
@@ -261,22 +246,35 @@ class UserInterface {
 		}
 	}
 
-	// show updated robot's position
+	/*
+		Show updated robot's position.
+	*/
 	updatePosition(position) {
 		this.svg_robot.setAttribute('x', position[1] * 30);
 		this.svg_robot.setAttribute('y', position[0] * 30);
 	}
 
-	// show updated robot's direction
+	/*
+		Show updated robot's direction
+	*/
 	updateDirection(direction) {
-		let current_direction = parseInt(this.svg_robot_body.getAttribute('data-direction'));
-		let rotation = parseInt((current_direction + 90) / 360) * 360;
+		let current_rotation, next_rotation;
 
-		this.svg_robot_body.setAttribute('data-direction', direction);
-		this.svg_robot_body.style.transform = `rotate(${direction * 90 + rotation}deg)`;
+		current_rotation = parseInt(this.svg_robot_body.getAttribute('data-rotation'));
+
+		// do nothing when same direction
+		if ((current_rotation % 360) / 90 == direction) return;
+
+		next_rotation = parseInt((current_rotation + 90) / 360) * 360 + direction * 90;
+
+		// set robot's rotation
+		this.svg_robot_body.setAttribute('data-rotation', next_rotation);
+		this.svg_robot_body.style.transform = `rotate(${next_rotation}deg)`;
 	}
 
-	// show updated map information
+	/*
+		Show updated map information.
+	*/
 	updateMapInfo(map_info) {
 		let i, j;
 		for (i = 0; i < this.map_height; i++) {

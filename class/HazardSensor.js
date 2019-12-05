@@ -1,5 +1,11 @@
 class HazardSensor extends Sensor {
 
+	/*
+
+		Properties
+
+	*/
+
 	#map;
 
 	constructor(map) {
@@ -8,17 +14,15 @@ class HazardSensor extends Sensor {
 	}
 
 	/*
+
 		Methods
+
 	*/
 
 	/*
-		Called by SIMManager.
-
-		parameter:
-			(none)
-
-		return:
-			1 bit: indicates the existence of a hazard.
+		Return 1 bit data that indicates the existence of a hazard.
+			0: not exist
+			1: exist
 	*/
 	getSensorValue(position) {
 		return new Promise((resolve, reject) => {

@@ -1,21 +1,13 @@
 class RobotMovement {
 
 	/*
-		Properties
-	*/
 
-	/*
 		Methods
+
 	*/
 
 	/*
-		Called by SIMManager.
-
-		parameter:
-			(none)
-
-		return:
-			Promise
+		Rotate (clockwise) for 300ms.
 	*/
 	rotate() {
 		return new Promise((resolve, reject) => {
@@ -26,13 +18,7 @@ class RobotMovement {
 	}
 
 	/*
-		Called by SIMManager.
-
-		parameter:
-			(none)
-
-		return:
-			Promise
+		Move forward for 400ms.
 	*/
 	move() {
 		return new Promise((resolve, reject) => {

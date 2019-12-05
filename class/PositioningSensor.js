@@ -1,17 +1,15 @@
 class PositioningSensor extends Sensor {
 
 	/*
+
 		Methods
+
 	*/
 
 	/*
-		Called by SIMManager.
-
-		parameter:
-			(none)
-
-		return:
-			1 bit: indicates whether the SIM moved 2 tiles or not.
+		Return 1 bit data that indicates whether the SIM moved 2 tiles or not.
+			0: no error
+			1: error(moved 2 tiles)
 	*/
 	getSensorValue() {
 		return new Promise((resolve, reject) => {

@@ -1,7 +1,9 @@
 class AddOnManager {
 
 	/*
+
 		Properties
+
 	*/
 
 	#map;
@@ -19,15 +21,15 @@ class AddOnManager {
 	}
 
 	/*
+
 		Methods
+
 	*/
 
 	/*
-		Called by SIMManager.
+		Initialize ADD-ON.
 	*/
 	init(map_info, map_width, map_height) {
-		console.log(`AddOnManager init`);
-
 		this.status = false;
 
 		// initialize map
@@ -36,6 +38,10 @@ class AddOnManager {
 		this.sim_manager.setDirection(SIMManager.direction_type.north);
 	}
 
+	/*
+		Send the position and direction of the robot
+		and map information to the user interface to display.
+	*/
 	updateUI() {
 		if (!this.user_interface || !this.sim_manager) return;
 		this.user_interface.updatePosition(this.sim_manager.getPosition());
@@ -43,11 +49,14 @@ class AddOnManager {
 		this.user_interface.updateMapInfo(this.map.getMapInfo());
 	}
 
+	/*
+		Start the robot simulation.
+		Read sensor data and calculate the path.
+	*/
 	async startRobotSimulation() {
-		console.log(`Start Robot Simulation`);
 		this.status = true;
 
-		// send initial data to the user-interface
+		// send initial data to the user interface
 		this.updateUI();
 
 		// make initial path
@@ -83,7 +92,7 @@ class AddOnManager {
 			this.updateUI();
 
 			// end if the robot is out of the map
-			if (!this.map.isValidPosition(currentPosition[0], currentPosition[1])) {
+			if (!this.map.isValidPosition(currentPosition)) {
 				alert(`The positioning sensor detected that the robot is out of the map!`);
 				console.log(`The positioning sensor detected that the robot is out of the map!`);
 				break;
@@ -149,28 +158,28 @@ class AddOnManager {
 			// draw next command
 			let nextCommand = this.path.getNextCommand();
 			if (nextCommand != null) {
-				// order SIM manager to move or rotate
-				console.log(`Do the next command:${nextCommand}`);
+				// order robot to move or rotate
 				await this.sim_manager.driveMotor(nextCommand);
 			} else {
-				// if there is no command, end
+				// if there is no command left, end this simulation
 				if (this.map.getTargets().length > 0) {
 					alert(`Cannot make a path!`);
-					console.log(`Cannot make a path!`);
 				} else {
 					alert(`Ended successfully`);
-					console.log(`Ended successfully!`);
 				}
 				break;
 			}
-			
+
+			// update ui
 			this.updateUI();
 		}
 
-		console.log(`End Robot Simulation`);
 		this.stopRobotSimulation();
 	}
 
+	/*
+		End the robot simulation.
+	*/
 	stopRobotSimulation() {
 		this.status = false;
 	}
